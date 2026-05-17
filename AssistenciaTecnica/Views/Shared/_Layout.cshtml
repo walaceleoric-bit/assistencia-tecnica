@@ -1,0 +1,68 @@
+﻿@using AssistenciaTecnica.Data
+@inject AppDbContext Contexto
+
+@{
+    var configLayout = Contexto.Configuracoes.FirstOrDefault();
+    var nomeEmpresa = configLayout?.NomeEmpresa ?? "Milton Cardoso";
+    var logoUrl = configLayout?.LogoUrl ?? "";
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - @nomeEmpresa</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+
+    <header class="top-menu-pro">
+
+        <div class="top-brand-center">
+
+            @if (!string.IsNullOrWhiteSpace(logoUrl))
+            {
+                <img src="@logoUrl"
+                     alt="@nomeEmpresa"
+                     onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';" />
+            }
+
+            <div id="logoFallback"
+                 class="logo-fallback"
+                 style="display:@(string.IsNullOrWhiteSpace(logoUrl) ? "block" : "none")">
+                ⚡
+            </div>
+
+        </div>
+
+        <nav class="top-nav-pro">
+            <a asp-controller="Home" asp-action="Index">Início</a>
+            <a asp-controller="Home" asp-action="Servicos">Serviços</a>
+            <a asp-controller="Home" asp-action="Contato">Contato</a>
+
+            <a class="admin-link-pro"
+                   asp-controller="Auth"
+                   asp-action="Login">
+                Login ADM
+            </a>
+        </nav>
+
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        © @DateTime.Now.Year - @nomeEmpresa
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

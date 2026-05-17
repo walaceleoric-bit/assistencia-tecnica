@@ -1,0 +1,55 @@
+﻿@model AssistenciaTecnica.Models.Configuracao
+
+@{
+    ViewData["Title"] = "Contato";
+
+    var whatsappLimpo = Model.WhatsApp?
+        .Replace(" ", "")
+        .Replace("-", "")
+        .Replace("(", "")
+        .Replace(")", "");
+
+    var mensagem = $"Olá, vim pelo site da {Model.NomeEmpresa} e gostaria de solicitar um atendimento.";
+
+    var linkWhatsApp = string.IsNullOrWhiteSpace(whatsappLimpo)
+        ? "#"
+        : $"https://wa.me/55{whatsappLimpo}?text={Uri.EscapeDataString(mensagem)}";
+}
+
+<div class="container mt-4">
+    <a class="back-button"
+           asp-controller="Home"
+           asp-action="Index">
+        ← Voltar
+    </a>
+</div>
+
+<section class="page-hero">
+    <h1>Contato</h1>
+    <p>Solicite atendimento rápido para @Model.CidadesAtendidas.</p>
+</section>
+
+<section class="contact-area">
+    <div class="form-card contact-card">
+        <h2>@Model.NomeEmpresa</h2>
+
+        <p>
+            Entre em contato para orçamento, visita técnica,
+            compra ou venda de máquina de lavar.
+        </p>
+
+        <p>
+            <b>WhatsApp:</b> @Model.WhatsApp
+        </p>
+
+        <p>
+            <b>Região atendida:</b> @Model.CidadesAtendidas
+        </p>
+
+        <a class="btn-main"
+               href="@linkWhatsApp"
+               target="_blank">
+            Chamar no WhatsApp
+        </a>
+    </div>
+</section>

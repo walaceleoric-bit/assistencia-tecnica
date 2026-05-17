@@ -1,0 +1,203 @@
+﻿@model AssistenciaTecnica.ViewModels.RelatorioViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Relatórios";
+}
+
+<div class="container mt-4">
+
+    <a class="back-button"
+           asp-controller="Admin"
+           asp-action="Index">
+
+        ← Voltar para painel
+
+    </a>
+
+</div>
+
+
+<div class="admin-hero">
+
+    <h1>📊 Relatórios Inteligentes</h1>
+
+    <p>
+        Análise completa do desempenho da assistência técnica.
+    </p>
+
+</div>
+
+
+<div class="dashboard-grid">
+
+    <div class="dashboard-card">
+        <h3>👥 Clientes</h3>
+        <h2>@Model.TotalClientes</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>🛠 Serviços</h3>
+        <h2>@Model.TotalServicos</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>📋 Ordens</h3>
+        <h2>@Model.TotalOrdens</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>⏳ Abertas</h3>
+        <h2>@Model.OrdensAbertas</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>✅ Finalizadas</h3>
+        <h2>@Model.OrdensFinalizadas</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>❌ Canceladas</h3>
+        <h2>@Model.OrdensCanceladas</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>💰 Faturado</h3>
+        <h2>R$ @Model.FaturamentoFinalizado.ToString("N2")</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>🧾 Ticket Médio</h3>
+        <h2>R$ @Model.TicketMedio.ToString("N2")</h2>
+    </div>
+
+
+    <div class="dashboard-card">
+        <h3>⌛ Em Aberto</h3>
+        <h2>R$ @Model.FaturamentoEmAberto.ToString("N2")</h2>
+    </div>
+
+</div>
+
+
+<div class="container mt-5 mb-5">
+
+    <div class="form-card mb-5">
+
+        <h3>Status das Ordens</h3>
+
+        <canvas id="graficoStatus"></canvas>
+
+    </div>
+
+
+    <div class="form-card mb-5">
+
+        <h3>Serviços Mais Pedidos</h3>
+
+        <canvas id="graficoServicos"></canvas>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <h3>Faturamento Mensal</h3>
+
+        <canvas id="graficoFaturamento"></canvas>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+    const statusLabels =
+    @Html.Raw(JsonSerializer.Serialize(Model.StatusLabels));
+
+    const statusValores =
+    @Html.Raw(JsonSerializer.Serialize(Model.StatusValores));
+
+
+    const servicosLabels =
+    @Html.Raw(JsonSerializer.Serialize(Model.ServicosLabels));
+
+    const servicosValores =
+    @Html.Raw(JsonSerializer.Serialize(Model.ServicosValores));
+
+
+    const mesesLabels =
+    @Html.Raw(JsonSerializer.Serialize(Model.MesesLabels));
+
+    const faturamentoValores =
+    @Html.Raw(JsonSerializer.Serialize(Model.FaturamentoMesValores));
+
+
+
+    // STATUS
+    new Chart(
+    document.getElementById('graficoStatus'),
+    {
+    type: 'doughnut',
+
+    data: {
+
+    labels: statusLabels,
+
+    datasets: [{
+    data: statusValores
+    }]
+    }
+    }
+    );
+
+
+
+    // SERVIÇOS
+    new Chart(
+    document.getElementById('graficoServicos'),
+    {
+    type: 'bar',
+
+    data: {
+
+    labels: servicosLabels,
+
+    datasets: [{
+    data: servicosValores
+    }]
+    }
+    }
+    );
+
+
+
+    // FATURAMENTO
+    new Chart(
+    document.getElementById('graficoFaturamento'),
+    {
+    type: 'line',
+
+    data: {
+
+    labels: mesesLabels,
+
+    datasets: [{
+    data: faturamentoValores
+    }]
+    }
+    }
+    );
+
+</script>

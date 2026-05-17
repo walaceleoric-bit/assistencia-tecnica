@@ -1,0 +1,33 @@
+﻿@model AssistenciaTecnica.Models.Servico
+
+@{
+    ViewData["Title"] = "Novo Serviço";
+}
+
+<div class="container mt-4">
+    <a class="back-button" asp-controller="Servicos" asp-action="Index">
+        ← Voltar
+    </a>
+</div>
+
+<form asp-action="Criar" method="post" class="form-card">
+    <h2>Novo Serviço</h2>
+
+    <label>Ícone</label>
+    <input asp-for="Icone" class="form-control" placeholder="Ex: 🧺" />
+
+    <label>Nome</label>
+    <input asp-for="Nome" class="form-control" placeholder="Ex: Máquina de lavar" />
+
+    <label>Descrição</label>
+    <textarea asp-for="Descricao" class="form-control" rows="4"></textarea>
+
+    <label class="mt-3">
+        <input asp-for="Ativo" />
+        Serviço ativo
+    </label>
+
+    <button type="submit" class="btn-main mt-3">
+        Salvar
+    </button>
+</form>

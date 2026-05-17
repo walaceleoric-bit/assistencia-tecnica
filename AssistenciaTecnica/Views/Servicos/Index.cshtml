@@ -1,0 +1,52 @@
+﻿@model List<AssistenciaTecnica.Models.Servico>
+
+@{
+    ViewData["Title"] = "Serviços";
+}
+
+<div class="container mt-4">
+    <a class="back-button" asp-controller="Admin" asp-action="Index">
+        ← Voltar para painel
+    </a>
+</div>
+
+<div class="admin-hero">
+    <h1>🛠 Serviços</h1>
+    <p>Cadastre os serviços que aparecem no site.</p>
+</div>
+
+<div class="container mb-5">
+    <a class="btn-main" asp-controller="Servicos" asp-action="Criar">
+        + Novo Serviço
+    </a>
+
+    <div class="table-card mt-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ícone</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Ativo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Icone</td>
+                        <td>@item.Nome</td>
+                        <td>@item.Descricao</td>
+                        <td>@(item.Ativo ? "Sim" : "Não")</td>
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-action="Editar" asp-route-id="@item.Id">Editar</a>
+                            <a class="btn btn-sm btn-danger" asp-action="Excluir" asp-route-id="@item.Id">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

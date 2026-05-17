@@ -1,0 +1,48 @@
+﻿@model AssistenciaTecnica.Models.Cliente
+
+@{
+    ViewData["Title"] = "Detalhes do Cliente";
+}
+
+<div class="container mt-4">
+    <a class="back-button"
+           asp-controller="Clientes"
+           asp-action="Index">
+
+        ← Voltar
+
+    </a>
+</div>
+
+
+<div class="form-card">
+
+    <h2>Detalhes do Cliente</h2>
+
+    <p><b>Nome:</b> @Model.Nome</p>
+
+    <p><b>CPF:</b> @Model.Cpf</p>
+
+    <p><b>Telefone:</b> @Model.Telefone</p>
+
+    <p><b>Email:</b> @Model.Email</p>
+
+    <p><b>Endereço:</b> @Model.Endereco</p>
+
+    <p><b>Cidade:</b> @Model.Cidade</p>
+
+    <p><b>Observação:</b> @Model.Observacao</p>
+
+    <p><b>Data de cadastro:</b> @Model.DataCadastro.ToString("dd/MM/yyyy")</p>
+
+
+    <a class="btn-main mt-3"
+           asp-controller="Clientes"
+           asp-action="Editar"
+           asp-route-id="@Model.Id">
+
+        Editar Cliente
+
+    </a>
+
+</div>

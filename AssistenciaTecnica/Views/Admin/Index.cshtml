@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Painel Administrativo";
+}
+
+<div class="container mt-4">
+    <a class="back-button"
+           asp-controller="Home"
+           asp-action="Index">
+        ← Voltar para o site
+    </a>
+</div>
+
+<section class="admin-dashboard-section">
+
+    <div class="admin-dashboard-hero">
+        <h1>Painel Administrativo</h1>
+        <p>Controle total do site, serviços, clientes, ordens e relatórios inteligentes.</p>
+    </div>
+
+    <div class="admin-dashboard-grid">
+
+        <a class="admin-dashboard-card" asp-controller="Admin" asp-action="Configuracao">
+            <div class="admin-card-icon">⚙️</div>
+            <div>
+                <h3>Configuração</h3>
+                <p>Altere textos, WhatsApp, logo e imagens da página principal.</p>
+            </div>
+            <span>→</span>
+        </a>
+
+        <a class="admin-dashboard-card" asp-controller="Servicos" asp-action="Index">
+            <div class="admin-card-icon">🛠️</div>
+            <div>
+                <h3>Serviços</h3>
+                <p>Cadastre, edite ou remova os serviços oferecidos.</p>
+            </div>
+            <span>→</span>
+        </a>
+
+        <a class="admin-dashboard-card" asp-controller="Clientes" asp-action="Index">
+            <div class="admin-card-icon">👥</div>
+            <div>
+                <h3>Clientes</h3>
+                <p>Gerencie clientes, telefones, CPF, endereços e histórico.</p>
+            </div>
+            <span>→</span>
+        </a>
+
+        <a class="admin-dashboard-card" asp-controller="OrdensServico" asp-action="Index">
+            <div class="admin-card-icon">📋</div>
+            <div>
+                <h3>Ordens de Serviço</h3>
+                <p>Controle equipamentos, defeitos, status, fotos e valores.</p>
+            </div>
+            <span>→</span>
+        </a>
+
+        <a class="admin-dashboard-card" asp-controller="Relatorios" asp-action="Index">
+            <div class="admin-card-icon">📊</div>
+            <div>
+                <h3>Relatórios</h3>
+                <p>Acompanhe faturamento, gráficos, ticket médio e desempenho.</p>
+            </div>
+            <span>→</span>
+        </a>
+
+        <a class="admin-dashboard-card sair" asp-controller="Auth" asp-action="Sair">
+            <div class="admin-card-icon">🚪</div>
+            <div>
+                <h3>Sair</h3>
+                <p>Encerrar a sessão administrativa com segurança.</p>
+            </div>
+            <span>→</span>
+        </a>
+
+    </div>
+
+</section>

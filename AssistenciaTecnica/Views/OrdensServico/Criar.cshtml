@@ -1,0 +1,86 @@
+﻿@model AssistenciaTecnica.Models.OrdemServico
+
+@{
+    ViewData["Title"] = "Nova Ordem";
+}
+
+<div class="container mt-4">
+
+    <a class="back-button"
+           asp-action="Index">
+
+        ← Voltar
+
+    </a>
+
+</div>
+
+
+<form asp-action="Criar"
+      method="post"
+      enctype="multipart/form-data"
+      class="form-card">
+
+    <h2>Nova Ordem de Serviço</h2>
+
+
+    <label>Cliente</label>
+    <select asp-for="ClienteId"
+            asp-items="ViewBag.Clientes"
+            class="form-control"></select>
+
+
+    <label>Serviço</label>
+    <select asp-for="ServicoId"
+            asp-items="ViewBag.Servicos"
+            class="form-control"></select>
+
+
+    <label>Aparelho</label>
+    <input asp-for="Aparelho"
+           class="form-control" />
+
+
+    <label>Foto do aparelho</label>
+    <input type="file"
+           name="foto"
+           class="form-control"
+           accept="image/*" />
+
+
+    <label>Marca / Modelo</label>
+    <input asp-for="MarcaModelo"
+           class="form-control" />
+
+
+    <label>Defeito relatado</label>
+    <textarea asp-for="DefeitoRelatado"
+              rows="3"
+              class="form-control"></textarea>
+
+
+    <label>Status</label>
+    <select asp-for="Status"
+            asp-items="ViewBag.Status"
+            class="form-control"></select>
+
+
+    <label>Valor</label>
+    <input asp-for="Valor"
+           class="form-control" />
+
+
+    <label>Observação técnica</label>
+    <textarea asp-for="ObservacaoTecnica"
+              rows="4"
+              class="form-control"></textarea>
+
+
+    <button type="submit"
+            class="btn-main mt-3">
+
+        Salvar
+
+    </button>
+
+</form>

@@ -1,0 +1,128 @@
+﻿@model AssistenciaTecnica.Models.OrdemServico
+
+@{
+    ViewData["Title"] = "Detalhes da Ordem";
+
+    var telefoneLimpo = Model.Cliente?.Telefone?
+        .Replace(" ", "")
+        .Replace("-", "")
+        .Replace("(", "")
+        .Replace(")", "");
+
+    var numeroWhatsApp = string.IsNullOrWhiteSpace(telefoneLimpo)
+        ? ""
+        : "55" + telefoneLimpo;
+
+    var mensagemOrcamento =
+        $"Olá {Model.Cliente?.Nome}, tudo bem? Sua ordem #{Model.Id} referente ao aparelho {Model.Aparelho} foi analisada. O valor do serviço ficou em R$ {Model.Valor:N2}. Podemos seguir com o reparo?";
+
+    var mensagemPronto =
+        $"Olá {Model.Cliente?.Nome}, tudo bem? Seu aparelho {Model.Aparelho}, referente à ordem #{Model.Id}, já está pronto. Pode entrar em contato para combinar a retirada/entrega.";
+
+    var mensagemStatus =
+        $"Olá {Model.Cliente?.Nome}, tudo bem? Passando para atualizar sua ordem #{Model.Id}. Status atual: {Model.Status}. Aparelho: {Model.Aparelho}.";
+
+    var linkOrcamento = string.IsNullOrWhiteSpace(numeroWhatsApp)
+        ? "#"
+        : $"https://wa.me/{numeroWhatsApp}?text={Uri.EscapeDataString(mensagemOrcamento)}";
+
+    var linkPronto = string.IsNullOrWhiteSpace(numeroWhatsApp)
+        ? "#"
+        : $"https://wa.me/{numeroWhatsApp}?text={Uri.EscapeDataString(mensagemPronto)}";
+
+    var linkStatus = string.IsNullOrWhiteSpace(numeroWhatsApp)
+        ? "#"
+        : $"https://wa.me/{numeroWhatsApp}?text={Uri.EscapeDataString(mensagemStatus)}";
+}
+
+<div class="container mt-4">
+
+    <a class="back-button"
+           asp-action="Index">
+
+        ← Voltar
+
+    </a>
+
+</div>
+
+
+<div class="form-card">
+
+    <h2>
+        Ordem #@Model.Id
+    </h2>
+
+
+    <div class="whatsapp-actions">
+
+        <a class="btn-main"
+               href="@linkOrcamento"
+               target="_blank">
+
+            Enviar orçamento
+
+        </a>
+
+
+        <a class="btn-main"
+               href="@linkPronto"
+               target="_blank">
+
+            Avisar que está pronto
+
+        </a>
+
+
+        <a class="btn-outline-main"
+               href="@linkStatus"
+               target="_blank">
+
+            Enviar status
+
+        </a>
+
+    </div>
+
+
+    <hr />
+
+
+    <p><b>Cliente:</b> @Model.Cliente?.Nome</p>
+
+    <p><b>Telefone:</b> @Model.Cliente?.Telefone</p>
+
+    <p><b>Serviço:</b> @Model.Servico?.Nome</p>
+
+    <p><b>Aparelho:</b> @Model.Aparelho</p>
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.FotoUrl))
+    {
+        <img src="@Model.FotoUrl"
+             style="max-width:100%; border-radius:18px; margin:20px 0;"
+             alt="Foto do aparelho" />
+    }
+
+
+    <p><b>Marca:</b> @Model.MarcaModelo</p>
+
+    <p><b>Defeito:</b> @Model.DefeitoRelatado</p>
+
+    <p><b>Status:</b> @Model.Status</p>
+
+    <p><b>Valor:</b> R$ @Model.Valor.ToString("N2")</p>
+
+    <p><b>Observação:</b> @Model.ObservacaoTecnica</p>
+
+    <p><b>Data abertura:</b> @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")</p>
+
+    @if (Model.DataFinalizacao != null)
+    {
+        <p>
+            <b>Data finalização:</b>
+            @Model.DataFinalizacao.Value.ToString("dd/MM/yyyy HH:mm")
+        </p>
+    }
+
+</div>

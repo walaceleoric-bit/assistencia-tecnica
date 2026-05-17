@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Login ADM";
+}
+
+<div class="container mt-4">
+    <a class="back-button"
+           asp-controller="Home"
+           asp-action="Index">
+
+        ← Voltar
+
+    </a>
+</div>
+
+<section class="login-area">
+    <form asp-controller="Auth" asp-action="Login" method="post" class="login-card">
+
+        <h1>Login ADM</h1>
+        <p>Acesse o painel administrativo do site.</p>
+
+        @if (TempData["Erro"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Erro"]
+            </div>
+        }
+
+        <label>Usuário</label>
+        <input name="usuario" class="form-control" placeholder="Digite o usuário" />
+
+        <label>Senha</label>
+        <input name="senha" type="password" class="form-control" placeholder="Digite a senha" />
+
+        <button type="submit" class="btn-main w-100 mt-3">
+            Entrar
+        </button>
+
+    </form>
+</section>

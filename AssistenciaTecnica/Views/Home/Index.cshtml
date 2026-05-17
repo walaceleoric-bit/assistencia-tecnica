@@ -1,0 +1,191 @@
+﻿@model AssistenciaTecnica.Models.Configuracao
+
+@{
+    ViewData["Title"] = "Início";
+
+    var whatsappLimpo = Model.WhatsApp?
+        .Replace(" ", "")
+        .Replace("-", "")
+        .Replace("(", "")
+        .Replace(")", "");
+
+    var mensagem = $"Olá, vim pelo site da {Model.NomeEmpresa} e gostaria de solicitar atendimento.";
+
+    var linkWhatsApp = string.IsNullOrWhiteSpace(whatsappLimpo)
+        ? "#"
+        : $"https://wa.me/55{whatsappLimpo}?text={Uri.EscapeDataString(mensagem)}";
+}
+
+<section class="new-home-hero">
+    <div class="new-home-content">
+
+        <div class="new-home-text">
+            <span class="new-home-location">📍 @Model.CidadesAtendidas</span>
+
+            <h1>@Model.TituloPrincipal</h1>
+
+            <p>@Model.TextoPrincipal</p>
+
+            <div class="new-home-benefits">
+                <div>
+                    <span>🛡️</span>
+                    <strong>Garantia</strong>
+                    <small>Serviço com segurança</small>
+                </div>
+
+                <div>
+                    <span>⚡</span>
+                    <strong>Rapidez</strong>
+                    <small>Atendimento ágil</small>
+                </div>
+
+                <div>
+                    <span>🔧</span>
+                    <strong>Especialista</strong>
+                    <small>Manutenção profissional</small>
+                </div>
+            </div>
+
+            <a class="new-whatsapp-btn" href="@linkWhatsApp" target="_blank">
+                💬 Fale pelo WhatsApp
+            </a>
+        </div>
+
+        <div class="new-home-images">
+            @if (!string.IsNullOrWhiteSpace(Model.Destaque1ImagemUrl))
+            {
+                <img class="main-hero-img" src="@Model.Destaque1ImagemUrl" alt="@Model.Destaque1Titulo" />
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.Destaque2ImagemUrl))
+            {
+                <img class="small-hero-img" src="@Model.Destaque2ImagemUrl" alt="@Model.Destaque2Titulo" />
+            }
+        </div>
+
+    </div>
+</section>
+
+<section class="home-trust-strip">
+    <div>
+        <strong>✅ Atendimento direto</strong>
+        <span>Contato rápido pelo WhatsApp</span>
+    </div>
+
+    <div>
+        <strong>🔍 Diagnóstico claro</strong>
+        <span>Explicação antes do serviço</span>
+    </div>
+
+    <div>
+        <strong>💰 Orçamento transparente</strong>
+        <span>Você aprova antes do reparo</span>
+    </div>
+</section>
+
+<section class="new-highlight-section">
+    <div class="new-section-title">
+        <span>SERVIÇOS EM DESTAQUE</span>
+        <h2>Soluções completas para seus eletrodomésticos</h2>
+        <p>Atendimento com qualidade, agilidade e confiança.</p>
+    </div>
+
+    <div class="new-highlight-grid">
+
+        <div class="new-highlight-card">
+            @if (!string.IsNullOrWhiteSpace(Model.Destaque1ImagemUrl))
+            {
+                <img src="@Model.Destaque1ImagemUrl" alt="@Model.Destaque1Titulo" />
+            }
+
+            <div>
+                <h3>@Model.Destaque1Titulo</h3>
+                <p>@Model.Destaque1Texto</p>
+                <a href="@linkWhatsApp" target="_blank">Solicitar atendimento</a>
+            </div>
+        </div>
+
+        <div class="new-highlight-card">
+            @if (!string.IsNullOrWhiteSpace(Model.Destaque2ImagemUrl))
+            {
+                <img src="@Model.Destaque2ImagemUrl" alt="@Model.Destaque2Titulo" />
+            }
+
+            <div>
+                <h3>@Model.Destaque2Titulo</h3>
+                <p>@Model.Destaque2Texto</p>
+                <a href="@linkWhatsApp" target="_blank">Falar agora</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="home-process">
+    <div class="new-section-title">
+        <span>COMO FUNCIONA</span>
+        <h2>Atendimento simples e profissional</h2>
+    </div>
+
+    <div class="home-process-grid">
+        <div>
+            <b>1</b>
+            <h3>Contato</h3>
+            <p>O cliente chama pelo WhatsApp e informa o problema.</p>
+        </div>
+
+        <div>
+            <b>2</b>
+            <h3>Avaliação</h3>
+            <p>O aparelho é analisado para identificar o defeito.</p>
+        </div>
+
+        <div>
+            <b>3</b>
+            <h3>Orçamento</h3>
+            <p>O valor é informado antes da execução do serviço.</p>
+        </div>
+
+        <div>
+            <b>4</b>
+            <h3>Reparo</h3>
+            <p>Após aprovação, o serviço é realizado com qualidade.</p>
+        </div>
+    </div>
+</section>
+
+<section class="new-blue-strip">
+    <div>
+        <span>🛠️</span>
+        <h3>Manutenção Especializada</h3>
+        <p>Serviços para máquinas de lavar, TVs, micro-ondas e outros aparelhos.</p>
+    </div>
+
+    <div>
+        <span>📍</span>
+        <h3>Região atendida</h3>
+        <p>@Model.CidadesAtendidas</p>
+    </div>
+
+    <div>
+        <span>📞</span>
+        <h3>Contato rápido</h3>
+        <p>Chame pelo WhatsApp e solicite atendimento.</p>
+    </div>
+</section>
+
+<section class="new-contact-area">
+    <div class="new-contact-card">
+        <h2>Precisa de conserto ou orçamento?</h2>
+        <p>Entre em contato agora e solicite uma avaliação para seu aparelho.</p>
+
+        <a href="@linkWhatsApp" target="_blank">
+            Chamar no WhatsApp
+        </a>
+    </div>
+
+    <div class="new-region-card">
+        <h2>📍 Atendimento local</h2>
+        <p>@Model.CidadesAtendidas</p>
+    </div>
+</section>

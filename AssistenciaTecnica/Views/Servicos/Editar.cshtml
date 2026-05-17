@@ -1,0 +1,35 @@
+﻿@model AssistenciaTecnica.Models.Servico
+
+@{
+    ViewData["Title"] = "Editar Serviço";
+}
+
+<div class="container mt-4">
+    <a class="back-button" asp-controller="Servicos" asp-action="Index">
+        ← Voltar
+    </a>
+</div>
+
+<form asp-action="Editar" method="post" class="form-card">
+    <input type="hidden" asp-for="Id" />
+
+    <h2>Editar Serviço</h2>
+
+    <label>Ícone</label>
+    <input asp-for="Icone" class="form-control" />
+
+    <label>Nome</label>
+    <input asp-for="Nome" class="form-control" />
+
+    <label>Descrição</label>
+    <textarea asp-for="Descricao" class="form-control" rows="4"></textarea>
+
+    <label class="mt-3">
+        <input asp-for="Ativo" />
+        Serviço ativo
+    </label>
+
+    <button type="submit" class="btn-main mt-3">
+        Salvar Alterações
+    </button>
+</form>

@@ -1,0 +1,120 @@
+﻿@model List<AssistenciaTecnica.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="container mt-4">
+    <a class="back-button"
+           asp-controller="Admin"
+           asp-action="Index">
+
+        ← Voltar para painel
+
+    </a>
+</div>
+
+
+<div class="admin-hero">
+
+    <h1>👥 Clientes</h1>
+
+    <p>
+        Cadastro e gerenciamento de clientes.
+    </p>
+
+</div>
+
+
+<div class="container mb-5">
+
+    <a class="btn-main"
+           asp-controller="Clientes"
+           asp-action="Criar">
+
+        + Novo Cliente
+
+    </a>
+
+
+    <div class="table-card mt-4">
+
+        <table class="table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Nome</th>
+
+                    <th>CPF</th>
+
+                    <th>Telefone</th>
+
+                    <th>Cidade</th>
+
+                    <th>Data</th>
+
+                    <th>Ações</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+
+                        <td>@item.Nome</td>
+
+                        <td>@item.Cpf</td>
+
+                        <td>@item.Telefone</td>
+
+                        <td>@item.Cidade</td>
+
+                        <td>@item.DataCadastro.ToString("dd/MM/yyyy")</td>
+
+                        <td>
+
+                            <a class="btn btn-sm btn-info"
+                                   asp-action="Detalhes"
+                                   asp-route-id="@item.Id">
+
+                                Ver
+
+                            </a>
+
+
+                            <a class="btn btn-sm btn-primary"
+                                   asp-action="Editar"
+                                   asp-route-id="@item.Id">
+
+                                Editar
+
+                            </a>
+
+
+                            <a class="btn btn-sm btn-danger"
+                                   asp-action="Excluir"
+                                   asp-route-id="@item.Id">
+
+                                Excluir
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
