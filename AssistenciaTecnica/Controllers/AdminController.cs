@@ -32,15 +32,10 @@ namespace AssistenciaTecnica.Controllers
 
             if (string.IsNullOrEmpty(webRoot))
             {
-                webRoot = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot");
+                webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
             }
 
-            var pasta = Path.Combine(
-                webRoot,
-                "uploads",
-                "site");
+            var pasta = Path.Combine(webRoot, "uploads", "site");
 
             if (!Directory.Exists(pasta))
             {
@@ -49,13 +44,9 @@ namespace AssistenciaTecnica.Controllers
 
             var extensao = Path.GetExtension(arquivo.FileName);
             var nomeArquivo = $"{Guid.NewGuid()}{extensao}";
-            var caminhoCompleto = Path.Combine(
-                pasta,
-                nomeArquivo);
+            var caminhoCompleto = Path.Combine(pasta, nomeArquivo);
 
-            using (var stream = new FileStream(
-                caminhoCompleto,
-                FileMode.Create))
+            using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
             {
                 await arquivo.CopyToAsync(stream);
             }
@@ -65,98 +56,86 @@ namespace AssistenciaTecnica.Controllers
 
         private async Task<Configuracao> ObterConfiguracao()
         {
-            var config = await _context.Configuracoes
-                .FirstOrDefaultAsync();
+            var config = await _context.Configuracoes.FirstOrDefaultAsync();
 
             if (config == null)
             {
-                config = new Configuracao();
+                config = new Configuracao
+                {
+                    NomeEmpresa = "Milton Cardoso",
+                    SubtituloEmpresa = "Assistência Técnica",
+                    TituloPrincipal = "Conserto de Eletrodomésticos",
+                    TextoPrincipal = "Máquina de lavar, TV, micro-ondas e muito mais. Atendimento rápido, profissional e com garantia.",
+                    Destaque1Titulo = "Máquinas de lavar",
+                    Destaque1Texto = "Conserto, manutenção e revisão de máquinas de lavar.",
+                    Destaque2Titulo = "Televisores e Micro-ondas",
+                    Destaque2Texto = "Manutenção em televisores, micro-ondas e outros eletrodomésticos.",
+                    SenhaAdm = "123456"
+                };
 
                 _context.Configuracoes.Add(config);
-
                 await _context.SaveChangesAsync();
             }
 
             bool alterou = false;
 
-            if (string.IsNullOrWhiteSpace(config.NomeEmpresa)
-                || config.NomeEmpresa == "Assistência Técnica")
+            if (string.IsNullOrWhiteSpace(config.SenhaAdm))
+            {
+                config.SenhaAdm = "123456";
+                alterou = true;
+            }
+
+            if (string.IsNullOrWhiteSpace(config.NomeEmpresa) || config.NomeEmpresa == "Assistência Técnica")
             {
                 config.NomeEmpresa = "Milton Cardoso";
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(
-                config.SubtituloEmpresa))
+            if (string.IsNullOrWhiteSpace(config.SubtituloEmpresa))
             {
-                config.SubtituloEmpresa =
-                    "Assistência Técnica";
-
+                config.SubtituloEmpresa = "Assistência Técnica";
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(
-                config.TituloPrincipal))
+            if (string.IsNullOrWhiteSpace(config.TituloPrincipal))
             {
-                config.TituloPrincipal =
-                    "Conserto de Eletrodomésticos";
-
+                config.TituloPrincipal = "Conserto de Eletrodomésticos";
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(
-                config.TextoPrincipal))
+            if (string.IsNullOrWhiteSpace(config.TextoPrincipal))
             {
-                config.TextoPrincipal =
-                    "Máquina de lavar, TV, micro-ondas e muito mais. Atendimento rápido, profissional e com garantia.";
-
+                config.TextoPrincipal = "Máquina de lavar, TV, micro-ondas e muito mais. Atendimento rápido, profissional e com garantia.";
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(
-                config.Destaque1Titulo)
-                || config.Destaque1Titulo.StartsWith("/"))
+            if (string.IsNullOrWhiteSpace(config.Destaque1Titulo) || config.Destaque1Titulo.StartsWith("/"))
             {
-                config.Destaque1Titulo =
-                    "Máquinas de lavar";
-
+                config.Destaque1Titulo = "Máquinas de lavar";
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(
-                config.Destaque1Texto)
-                || config.Destaque1Texto.StartsWith("/"))
+            if (string.IsNullOrWhiteSpace(config.Destaque1Texto) || config.Destaque1Texto.StartsWith("/"))
             {
-                config.Destaque1Texto =
-                    "Conserto, manutenção e revisão de máquinas de lavar.";
-
+                config.Destaque1Texto = "Conserto, manutenção e revisão de máquinas de lavar.";
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(
-                config.Destaque2Titulo)
-                || config.Destaque2Titulo.StartsWith("/"))
+            if (string.IsNullOrWhiteSpace(config.Destaque2Titulo) || config.Destaque2Titulo.StartsWith("/"))
             {
-                config.Destaque2Titulo =
-                    "Televisores e Micro-ondas";
-
+                config.Destaque2Titulo = "Televisores e Micro-ondas";
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(
-                config.Destaque2Texto)
-                || config.Destaque2Texto.StartsWith("/"))
+            if (string.IsNullOrWhiteSpace(config.Destaque2Texto) || config.Destaque2Texto.StartsWith("/"))
             {
-                config.Destaque2Texto =
-                    "Manutenção em televisores, micro-ondas e outros eletrodomésticos.";
-
+                config.Destaque2Texto = "Manutenção em televisores, micro-ondas e outros eletrodomésticos.";
                 alterou = true;
             }
 
             if (alterou)
             {
                 _context.Configuracoes.Update(config);
-
                 await _context.SaveChangesAsync();
             }
 
@@ -166,9 +145,7 @@ namespace AssistenciaTecnica.Controllers
         public IActionResult Index()
         {
             if (!AdminLogado())
-                return RedirectToAction(
-                    "Login",
-                    "Auth");
+                return RedirectToAction("Login", "Auth");
 
             return View();
         }
@@ -176,9 +153,7 @@ namespace AssistenciaTecnica.Controllers
         public async Task<IActionResult> Configuracao()
         {
             if (!AdminLogado())
-                return RedirectToAction(
-                    "Login",
-                    "Auth");
+                return RedirectToAction("Login", "Auth");
 
             var config = await ObterConfiguracao();
 
@@ -193,56 +168,44 @@ namespace AssistenciaTecnica.Controllers
             IFormFile? destaque2)
         {
             if (!AdminLogado())
-                return RedirectToAction(
-                    "Login",
-                    "Auth");
+                return RedirectToAction("Login", "Auth");
 
-            var configBanco = await _context
-                .Configuracoes
+            var configBanco = await _context.Configuracoes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    c => c.Id == config.Id);
+                .FirstOrDefaultAsync(c => c.Id == config.Id);
 
             if (configBanco == null)
-                return RedirectToAction(
-                    "Configuracao");
+                return RedirectToAction("Configuracao");
 
-            var novaLogo =
-                await SalvarImagemAsync(logo);
+            var novaLogo = await SalvarImagemAsync(logo);
+            var novaDestaque1 = await SalvarImagemAsync(destaque1);
+            var novaDestaque2 = await SalvarImagemAsync(destaque2);
 
-            var novaDestaque1 =
-                await SalvarImagemAsync(destaque1);
-
-            var novaDestaque2 =
-                await SalvarImagemAsync(destaque2);
-
-            config.LogoUrl =
-                string.IsNullOrWhiteSpace(
-                    novaLogo)
+            config.LogoUrl = string.IsNullOrWhiteSpace(novaLogo)
                 ? configBanco.LogoUrl
                 : novaLogo;
 
-            config.Destaque1ImagemUrl =
-                string.IsNullOrWhiteSpace(
-                    novaDestaque1)
+            config.Destaque1ImagemUrl = string.IsNullOrWhiteSpace(novaDestaque1)
                 ? configBanco.Destaque1ImagemUrl
                 : novaDestaque1;
 
-            config.Destaque2ImagemUrl =
-                string.IsNullOrWhiteSpace(
-                    novaDestaque2)
+            config.Destaque2ImagemUrl = string.IsNullOrWhiteSpace(novaDestaque2)
                 ? configBanco.Destaque2ImagemUrl
                 : novaDestaque2;
 
-            _context.Configuracoes.Update(config);
+            if (string.IsNullOrWhiteSpace(config.SenhaAdm))
+            {
+                config.SenhaAdm = configBanco.SenhaAdm;
 
+                if (string.IsNullOrWhiteSpace(config.SenhaAdm))
+                    config.SenhaAdm = "123456";
+            }
+
+            _context.Configuracoes.Update(config);
             await _context.SaveChangesAsync();
 
-            TempData["Sucesso"] =
-                "Configurações salvas com sucesso!";
-
-            return RedirectToAction(
-                "Configuracao");
+            TempData["Sucesso"] = "Configurações salvas com sucesso!";
+            return RedirectToAction("Configuracao");
         }
     }
 }
