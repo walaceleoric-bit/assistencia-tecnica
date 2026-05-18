@@ -18,6 +18,7 @@ else
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

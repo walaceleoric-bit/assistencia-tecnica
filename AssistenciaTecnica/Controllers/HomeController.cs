@@ -15,24 +15,52 @@ namespace AssistenciaTecnica.Controllers
             _context = context;
         }
 
-        // Página pública principal do sistema SaaS
         public IActionResult Landing()
         {
             return View();
         }
 
-        // Home personalizada da empresa
-        public async Task<IActionResult> Index()
+        private int EmpresaId()
         {
-            var config = await _context.Configuracoes.FirstOrDefaultAsync();
+            return HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
+        }
+
+        private async Task<Configuracao> ObterConfiguracaoDaEmpresa()
+        {
+            var empresaId = EmpresaId();
+
+            if (empresaId == 0)
+            {
+                return new Configuracao
+                {
+                    NomeEmpresa = "Empresa",
+                    SubtituloEmpresa = "Assistência Técnica"
+                };
+            }
+
+            var config = await _context.Configuracoes
+                .FirstOrDefaultAsync(c => c.EmpresaId == empresaId);
 
             if (config == null)
             {
-                config = new Configuracao();
+                config = new Configuracao
+                {
+                    EmpresaId = empresaId,
+                    NomeEmpresa = "Empresa",
+                    SubtituloEmpresa = "Assistência Técnica",
+                    SenhaAdm = "123456"
+                };
+
                 _context.Configuracoes.Add(config);
                 await _context.SaveChangesAsync();
             }
 
+            return config;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var config = await ObterConfiguracaoDaEmpresa();
             return View(config);
         }
 
@@ -43,15 +71,7 @@ namespace AssistenciaTecnica.Controllers
 
         public async Task<IActionResult> Contato()
         {
-            var config = await _context.Configuracoes.FirstOrDefaultAsync();
-
-            if (config == null)
-            {
-                config = new Configuracao();
-                _context.Configuracoes.Add(config);
-                await _context.SaveChangesAsync();
-            }
-
+            var config = await ObterConfiguracaoDaEmpresa();
             return View(config);
         }
 

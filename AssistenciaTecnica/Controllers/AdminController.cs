@@ -76,12 +76,17 @@ namespace AssistenciaTecnica.Controllers
                     EmpresaId = empresaId,
                     NomeEmpresa = "Milton Cardoso",
                     SubtituloEmpresa = "Assistência Técnica",
+                    WhatsApp = "",
+                    CidadesAtendidas = "Serra e Vitória",
+                    LogoUrl = "",
                     TituloPrincipal = "Conserto de Eletrodomésticos",
                     TextoPrincipal = "Máquina de lavar, TV, micro-ondas e muito mais. Atendimento rápido, profissional e com garantia.",
                     Destaque1Titulo = "Máquinas de lavar",
                     Destaque1Texto = "Conserto, manutenção e revisão de máquinas de lavar.",
+                    Destaque1ImagemUrl = "",
                     Destaque2Titulo = "Televisores e Micro-ondas",
                     Destaque2Texto = "Manutenção em televisores, micro-ondas e outros eletrodomésticos.",
+                    Destaque2ImagemUrl = "",
                     SenhaAdm = "123456"
                 };
 
@@ -109,6 +114,24 @@ namespace AssistenciaTecnica.Controllers
                 alterou = true;
             }
 
+            if (config.WhatsApp == null)
+            {
+                config.WhatsApp = "";
+                alterou = true;
+            }
+
+            if (config.CidadesAtendidas == null)
+            {
+                config.CidadesAtendidas = "";
+                alterou = true;
+            }
+
+            if (config.LogoUrl == null)
+            {
+                config.LogoUrl = "";
+                alterou = true;
+            }
+
             if (string.IsNullOrWhiteSpace(config.TituloPrincipal))
             {
                 config.TituloPrincipal = "Conserto de Eletrodomésticos";
@@ -133,6 +156,12 @@ namespace AssistenciaTecnica.Controllers
                 alterou = true;
             }
 
+            if (config.Destaque1ImagemUrl == null)
+            {
+                config.Destaque1ImagemUrl = "";
+                alterou = true;
+            }
+
             if (string.IsNullOrWhiteSpace(config.Destaque2Titulo) || config.Destaque2Titulo.StartsWith("/"))
             {
                 config.Destaque2Titulo = "Televisores e Micro-ondas";
@@ -142,6 +171,12 @@ namespace AssistenciaTecnica.Controllers
             if (string.IsNullOrWhiteSpace(config.Destaque2Texto) || config.Destaque2Texto.StartsWith("/"))
             {
                 config.Destaque2Texto = "Manutenção em televisores, micro-ondas e outros eletrodomésticos.";
+                alterou = true;
+            }
+
+            if (config.Destaque2ImagemUrl == null)
+            {
+                config.Destaque2ImagemUrl = "";
                 alterou = true;
             }
 
@@ -220,6 +255,21 @@ namespace AssistenciaTecnica.Controllers
                 if (string.IsNullOrWhiteSpace(config.SenhaAdm))
                     config.SenhaAdm = "123456";
             }
+
+            config.NomeEmpresa ??= "";
+            config.SubtituloEmpresa ??= "";
+            config.WhatsApp ??= "";
+            config.CidadesAtendidas ??= "";
+            config.LogoUrl ??= "";
+            config.TituloPrincipal ??= "";
+            config.TextoPrincipal ??= "";
+            config.Destaque1Titulo ??= "";
+            config.Destaque1Texto ??= "";
+            config.Destaque1ImagemUrl ??= "";
+            config.Destaque2Titulo ??= "";
+            config.Destaque2Texto ??= "";
+            config.Destaque2ImagemUrl ??= "";
+            config.SenhaAdm ??= "123456";
 
             _context.Configuracoes.Update(config);
             await _context.SaveChangesAsync();

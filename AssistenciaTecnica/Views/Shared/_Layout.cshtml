@@ -1,9 +1,14 @@
 ﻿@using AssistenciaTecnica.Data
 @inject AppDbContext Contexto
+@inject IHttpContextAccessor ContextAccessor
 
 @{
-    var configLayout = Contexto.Configuracoes.FirstOrDefault();
-    var nomeEmpresa = configLayout?.NomeEmpresa ?? "Milton Cardoso";
+    var empresaId = ContextAccessor.HttpContext?.Session.GetInt32("EMPRESA_ID") ?? 0;
+
+    var configLayout = Contexto.Configuracoes
+        .FirstOrDefault(c => c.EmpresaId == empresaId);
+
+    var nomeEmpresa = configLayout?.NomeEmpresa ?? "Empresa";
     var logoUrl = configLayout?.LogoUrl ?? "";
 }
 
@@ -21,30 +26,22 @@
 <body>
 
     <header class="top-menu-pro">
-
         <div class="top-brand-center">
-
             @if (!string.IsNullOrWhiteSpace(logoUrl))
             {
                 <img src="@logoUrl" alt="@nomeEmpresa" />
             }
-
         </div>
 
         <nav class="top-nav-pro">
-
             <a asp-controller="Home" asp-action="Index">Início</a>
             <a asp-controller="Home" asp-action="Servicos">Serviços</a>
             <a asp-controller="Home" asp-action="Contato">Contato</a>
 
-            <a class="admin-link-pro"
-                   asp-controller="Auth"
-                   asp-action="Login">
-                Login ADM
+            <a class="admin-link-pro" asp-controller="Auth" asp-action="Sair">
+                Sair
             </a>
-
         </nav>
-
     </header>
 
     <main>
