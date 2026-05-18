@@ -1,15 +1,6 @@
-﻿@using AssistenciaTecnica.Data
-@inject AppDbContext Contexto
-
-@{
-    var configLayout = Contexto.Configuracoes.FirstOrDefault();
-    var nomeEmpresa = configLayout?.NomeEmpresa ?? "Milton Cardoso";
-    var logoUrl = configLayout?.LogoUrl ?? "";
-
-    var controllerAtual = ViewContext.RouteData.Values["controller"]?.ToString();
-    var actionAtual = ViewContext.RouteData.Values["action"]?.ToString();
-
-    var ehLanding = controllerAtual == "Home" && actionAtual == "Landing";
+﻿@{
+    var paginaAtual = Context.Request.Path.Value?.ToLower() ?? "";
+    var ehTelaLogin = paginaAtual.Contains("/auth/login");
 }
 
 <!DOCTYPE html>
@@ -17,10 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>
-        @(ehLanding ? "WLC Sistemas" : $"{ViewData["Title"]} - {nomeEmpresa}")
-    </title>
+    <title>@ViewData["Title"]</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -28,68 +16,29 @@
 
 <body>
 
-    <header class="top-menu-pro">
+    @if (!ehTelaLogin)
+    {
+        <header class="top-menu-pro">
 
-        <div class="top-brand-center">
+            <nav class="top-nav-pro">
 
-            @if (ehLanding)
-            {
-                <div class="wlc-brand">
-                    <h1>WLC Sistemas</h1>
-                    <p>Soluções digitais para negócios inteligentes</p>
-                </div>
-            }
-            else
-            {
-                @if (!string.IsNullOrWhiteSpace(logoUrl))
-                {
-                    <img src="@logoUrl"
-                         alt="@nomeEmpresa"
-                         onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';" />
-                }
-
-                <div id="logoFallback"
-                     class="logo-fallback"
-                     style="display:@(string.IsNullOrWhiteSpace(logoUrl) ? "block" : "none")">
-                    ⚡
-                </div>
-            }
-
-        </div>
-
-        <nav class="top-nav-pro">
-
-            @if (ehLanding)
-            {
                 <a class="admin-link-pro"
                        asp-controller="Auth"
                        asp-action="Login">
                     Login
                 </a>
-            }
-            else
-            {
-                <a asp-controller="Home" asp-action="Index">Início</a>
-                <a asp-controller="Home" asp-action="Servicos">Serviços</a>
-                <a asp-controller="Home" asp-action="Contato">Contato</a>
 
-                <a class="admin-link-pro"
-                       asp-controller="Auth"
-                       asp-action="Login">
-                    Login ADM
-                </a>
-            }
+            </nav>
 
-        </nav>
-
-    </header>
+        </header>
+    }
 
     <main>
         @RenderBody()
     </main>
 
     <footer class="site-footer">
-        © @DateTime.Now.Year - @(ehLanding ? "WLC Sistemas" : nomeEmpresa)
+        © @DateTime.Now.Year - WLC Sistemas
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
