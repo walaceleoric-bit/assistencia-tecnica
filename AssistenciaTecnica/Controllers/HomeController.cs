@@ -15,6 +15,13 @@ namespace AssistenciaTecnica.Controllers
             _context = context;
         }
 
+        // Página pública principal do sistema SaaS
+        public IActionResult Landing()
+        {
+            return View();
+        }
+
+        // Home personalizada da empresa
         public async Task<IActionResult> Index()
         {
             var config = await _context.Configuracoes.FirstOrDefaultAsync();
@@ -33,7 +40,6 @@ namespace AssistenciaTecnica.Controllers
         {
             return View();
         }
-
 
         public async Task<IActionResult> Contato()
         {
