@@ -1,47 +1,42 @@
 ﻿@{
-    ViewData["Title"] = "TechManager";
+    Layout = "_LayoutPublico";
+    ViewData["Title"] = "WLC Sistemas";
 }
 
-<section class="landing-page">
+<section class="hero-tech">
 
-    <div class="landing-hero">
+    <div class="hero-content">
+
+        <a asp-controller="Auth"
+               asp-action="Login"
+               class="btn-main">
+            Login
+        </a>
 
         <h1>
-            🚀 Sistema profissional para assistência técnica
+            Conserto de <br />
+            Eletrodomésticos
         </h1>
 
         <p>
-            Controle clientes, produtos, estoque,
-            vendas e ordens de serviço em um só lugar.
+            Máquina de lavar, TV, micro-ondas e muito mais.
         </p>
 
-        <div class="landing-nichos">
+        <div class="feature-grid">
 
-            <div class="nicho-card">
-                📱 Celulares
+            <div class="feature-card">
+                🛡 Garantia
             </div>
 
-            <div class="nicho-card">
-                💻 Informática
+            <div class="feature-card">
+                ⚡ Rapidez
             </div>
 
-            <div class="nicho-card">
-                ❄ Refrigeração
-            </div>
-
-            <div class="nicho-card">
-                📺 Eletrônicos
+            <div class="feature-card">
+                🔧 Especialista
             </div>
 
         </div>
-
-        <a class="btn-main"
-               asp-controller="Auth"
-               asp-action="Login">
-
-            Entrar no sistema
-
-        </a>
 
     </div>
 

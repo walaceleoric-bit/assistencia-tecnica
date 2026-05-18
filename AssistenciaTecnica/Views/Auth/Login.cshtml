@@ -1,39 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Login ADM";
+    Layout = "_LayoutPublico";
+    ViewData["Title"] = "Login";
 }
 
-<div class="container mt-4">
-    <a class="back-button"
-           asp-controller="Home"
-           asp-action="Index">
+<div class="login-page">
 
+    <a asp-controller="Home"
+           asp-action="Landing">
         ← Voltar
-
     </a>
+
+    <div class="login-card">
+
+        <h1>Login</h1>
+
+        <form method="post">
+
+            <label>Usuário</label>
+
+            <input name="usuario"
+                   class="form-control"
+                   placeholder="Digite o usuário" />
+
+            <label class="mt-3">Senha</label>
+
+            <input type="password"
+                   name="senha"
+                   class="form-control"
+                   placeholder="Digite a senha" />
+
+            <button type="submit"
+                    class="btn-main mt-4 w-100">
+                Entrar
+            </button>
+
+        </form>
+
+    </div>
+
 </div>
-
-<section class="login-area">
-    <form asp-controller="Auth" asp-action="Login" method="post" class="login-card">
-
-        <h1>Login ADM</h1>
-        <p>Acesse o painel administrativo do site.</p>
-
-        @if (TempData["Erro"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["Erro"]
-            </div>
-        }
-
-        <label>Usuário</label>
-        <input name="usuario" class="form-control" placeholder="Digite o usuário" />
-
-        <label>Senha</label>
-        <input name="senha" type="password" class="form-control" placeholder="Digite a senha" />
-
-        <button type="submit" class="btn-main w-100 mt-3">
-            Entrar
-        </button>
-
-    </form>
-</section>

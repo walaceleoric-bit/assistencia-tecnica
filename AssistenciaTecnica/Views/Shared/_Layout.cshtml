@@ -1,6 +1,10 @@
-﻿@{
-    var paginaAtual = Context.Request.Path.Value?.ToLower() ?? "";
-    var ehTelaLogin = paginaAtual.Contains("/auth/login");
+﻿@using AssistenciaTecnica.Data
+@inject AppDbContext Contexto
+
+@{
+    var configLayout = Contexto.Configuracoes.FirstOrDefault();
+    var nomeEmpresa = configLayout?.NomeEmpresa ?? "Milton Cardoso";
+    var logoUrl = configLayout?.LogoUrl ?? "";
 }
 
 <!DOCTYPE html>
@@ -8,7 +12,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"]</title>
+    <title>@ViewData["Title"] - @nomeEmpresa</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -16,33 +20,40 @@
 
 <body>
 
-    @if (!ehTelaLogin)
-    {
-        <header class="top-menu-pro">
+    <header class="top-menu-pro">
 
-            <nav class="top-nav-pro">
+        <div class="top-brand-center">
 
-                <a class="admin-link-pro"
-                       asp-controller="Auth"
-                       asp-action="Login">
-                    Login
-                </a>
+            @if (!string.IsNullOrWhiteSpace(logoUrl))
+            {
+                <img src="@logoUrl" alt="@nomeEmpresa" />
+            }
 
-            </nav>
+        </div>
 
-        </header>
-    }
+        <nav class="top-nav-pro">
+
+            <a asp-controller="Home" asp-action="Index">Início</a>
+            <a asp-controller="Home" asp-action="Servicos">Serviços</a>
+            <a asp-controller="Home" asp-action="Contato">Contato</a>
+
+            <a class="admin-link-pro"
+                   asp-controller="Auth"
+                   asp-action="Login">
+                Login ADM
+            </a>
+
+        </nav>
+
+    </header>
 
     <main>
         @RenderBody()
     </main>
 
     <footer class="site-footer">
-        © @DateTime.Now.Year - WLC Sistemas
+        © @DateTime.Now.Year - @nomeEmpresa
     </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
