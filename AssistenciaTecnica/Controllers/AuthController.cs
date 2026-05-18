@@ -14,8 +14,10 @@ namespace AssistenciaTecnica.Controllers
             _context = context;
         }
 
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            await CriarEmpresaPadraoSeNaoExistir();
+
             return View();
         }
 
@@ -24,41 +26,60 @@ namespace AssistenciaTecnica.Controllers
             string usuario,
             string senha)
         {
-            var config = await _context.Configuracoes
-                .FirstOrDefaultAsync();
+            await CriarEmpresaPadraoSeNaoExistir();
 
-            if (config == null)
+            if (string.IsNullOrWhiteSpace(usuario) ||
+                string.IsNullOrWhiteSpace(senha))
             {
-                config = new Configuracao();
-                _context.Configuracoes.Add(config);
-                await _context.SaveChangesAsync();
+                TempData["Erro"] = "Digite usuário e senha.";
+                return RedirectToAction("Login");
             }
 
-            var senhaAdm = string.IsNullOrWhiteSpace(config.SenhaAdm)
-                ? "123456"
-                : config.SenhaAdm;
+            var empresa = await _context.Empresas
+                .FirstOrDefaultAsync(e =>
+                    e.Usuario == usuario &&
+                    e.Senha == senha &&
+                    e.Ativo);
 
-            if (usuario == "admin" &&
-                senha == senhaAdm)
+            if (empresa == null)
             {
-                HttpContext.Session
-                    .SetString("ADM_LOGADO", "SIM");
-
-                return RedirectToAction("Index", "Admin");
+                TempData["Erro"] = "Usuário ou senha inválidos.";
+                return RedirectToAction("Login");
             }
 
-            TempData["Erro"] =
-                "Usuário ou senha inválidos.";
+            HttpContext.Session.SetString("ADM_LOGADO", "SIM");
+            HttpContext.Session.SetInt32("EMPRESA_ID", empresa.Id);
+            HttpContext.Session.SetString("EMPRESA_NOME", empresa.NomeEmpresa);
 
-            return RedirectToAction("Login");
+            return RedirectToAction("Index", "Admin");
         }
 
         public IActionResult Sair()
         {
-            HttpContext.Session
-                .Remove("ADM_LOGADO");
+            HttpContext.Session.Clear();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Landing", "Home");
+        }
+
+        private async Task CriarEmpresaPadraoSeNaoExistir()
+        {
+            var existeEmpresa = await _context.Empresas.AnyAsync();
+
+            if (!existeEmpresa)
+            {
+                var empresa = new Empresa
+                {
+                    NomeEmpresa = "Milton Cardoso",
+                    Usuario = "admin",
+                    Senha = "123456",
+                    WhatsApp = "",
+                    Ativo = true
+                };
+
+                _context.Empresas.Add(empresa);
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

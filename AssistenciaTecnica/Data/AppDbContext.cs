@@ -9,6 +9,8 @@ namespace AssistenciaTecnica.Data
         {
         }
 
+        public DbSet<Empresa> Empresas { get; set; }
+
         public DbSet<Configuracao> Configuracoes { get; set; }
 
         public DbSet<Servico> Servicos { get; set; }
