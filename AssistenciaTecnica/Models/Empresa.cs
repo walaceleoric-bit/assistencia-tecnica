@@ -19,6 +19,6 @@ namespace AssistenciaTecnica.Models
 
         public bool Ativo { get; set; } = true;
 
-        public DateTime DataCadastro { get; set; } = DateTime.Now;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
     }
 }
