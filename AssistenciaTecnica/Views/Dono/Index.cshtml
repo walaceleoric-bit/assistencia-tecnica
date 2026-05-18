@@ -1,0 +1,83 @@
+﻿@model List<AssistenciaTecnica.Models.Empresa>
+
+@{
+    ViewData["Title"] = "Painel do Dono";
+}
+
+<div class="container mt-4">
+    <a class="back-button" asp-controller="Dono" asp-action="Sair">
+        ← Sair
+    </a>
+</div>
+
+<div class="admin-hero">
+    <h1>👑 Painel do Dono</h1>
+    <p>Cadastre, libere ou bloqueie empresas/inquilinos do sistema.</p>
+</div>
+
+<div class="container mb-5">
+
+    <a class="btn-main" asp-controller="Dono" asp-action="Criar">
+        + Nova Empresa
+    </a>
+
+    <div class="table-card mt-4">
+
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Usuário</th>
+                    <th>WhatsApp</th>
+                    <th>Status</th>
+                    <th>Cadastro</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NomeEmpresa</td>
+                        <td>@item.Usuario</td>
+                        <td>@item.WhatsApp</td>
+
+                        <td>
+                            @if (item.Ativo)
+                            {
+                                <span class="badge bg-success">Liberado</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Bloqueado</span>
+                            }
+                        </td>
+
+                        <td>@item.DataCadastro.ToString("dd/MM/yyyy")</td>
+
+                        <td>
+                            <a class="btn btn-sm btn-primary"
+                                   asp-controller="Dono"
+                                   asp-action="Editar"
+                                   asp-route-id="@item.Id">
+                                Editar
+                            </a>
+
+                            <a class="btn btn-sm @(item.Ativo ? "btn-danger" : "btn-success")"
+                                   asp-controller="Dono"
+                                   asp-action="AlternarStatus"
+                                   asp-route-id="@item.Id">
+                                @(item.Ativo ? "Bloquear" : "Liberar")
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

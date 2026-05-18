@@ -22,9 +22,7 @@ namespace AssistenciaTecnica.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(
-            string usuario,
-            string senha)
+        public async Task<IActionResult> Login(string usuario, string senha)
         {
             await CriarEmpresaPadraoSeNaoExistir();
 
@@ -35,6 +33,17 @@ namespace AssistenciaTecnica.Controllers
                 return RedirectToAction("Login");
             }
 
+            // LOGIN DO DONO WLC
+            if (usuario == "wlc" && senha == "123456")
+            {
+                HttpContext.Session.Clear();
+
+                HttpContext.Session.SetString("DONO_LOGADO", "SIM");
+
+                return RedirectToAction("Index", "Dono");
+            }
+
+            // LOGIN DAS EMPRESAS / INQUILINOS
             var empresa = await _context.Empresas
                 .FirstOrDefaultAsync(e =>
                     e.Usuario == usuario &&
@@ -46,6 +55,8 @@ namespace AssistenciaTecnica.Controllers
                 TempData["Erro"] = "Usuário ou senha inválidos.";
                 return RedirectToAction("Login");
             }
+
+            HttpContext.Session.Clear();
 
             HttpContext.Session.SetString("ADM_LOGADO", "SIM");
             HttpContext.Session.SetInt32("EMPRESA_ID", empresa.Id);
@@ -73,7 +84,8 @@ namespace AssistenciaTecnica.Controllers
                     Usuario = "admin",
                     Senha = "123456",
                     WhatsApp = "",
-                    Ativo = true
+                    Ativo = true,
+                    DataCadastro = DateTime.UtcNow
                 };
 
                 _context.Empresas.Add(empresa);

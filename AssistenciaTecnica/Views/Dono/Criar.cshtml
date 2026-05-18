@@ -1,0 +1,33 @@
+﻿@model AssistenciaTecnica.Models.Empresa
+
+@{
+    ViewData["Title"] = "Nova Empresa";
+}
+
+<div class="container mt-4">
+    <a class="back-button" asp-controller="Dono" asp-action="Index">
+        ← Voltar
+    </a>
+</div>
+
+<form asp-controller="Dono" asp-action="Criar" method="post" class="form-card">
+
+    <h2>Nova Empresa/Inquilino</h2>
+
+    <label>Nome da empresa</label>
+    <input asp-for="NomeEmpresa" class="form-control" />
+
+    <label>Usuário de login</label>
+    <input asp-for="Usuario" class="form-control" />
+
+    <label>Senha</label>
+    <input asp-for="Senha" class="form-control" />
+
+    <label>WhatsApp</label>
+    <input asp-for="WhatsApp" class="form-control" placeholder="Ex: 27999999999" />
+
+    <button type="submit" class="btn-main mt-4">
+        Salvar Empresa
+    </button>
+
+</form>

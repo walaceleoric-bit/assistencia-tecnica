@@ -23,6 +23,11 @@ namespace AssistenciaTecnica.Controllers
             return HttpContext.Session.GetString("ADM_LOGADO") == "SIM";
         }
 
+        private int EmpresaId()
+        {
+            return HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
+        }
+
         private async Task<string> SalvarImagemAsync(IFormFile? arquivo)
         {
             if (arquivo == null || arquivo.Length == 0)
@@ -56,12 +61,19 @@ namespace AssistenciaTecnica.Controllers
 
         private async Task<Configuracao> ObterConfiguracao()
         {
-            var config = await _context.Configuracoes.FirstOrDefaultAsync();
+            var empresaId = EmpresaId();
+
+            if (empresaId == 0)
+                throw new Exception("Empresa não identificada na sessão.");
+
+            var config = await _context.Configuracoes
+                .FirstOrDefaultAsync(c => c.EmpresaId == empresaId);
 
             if (config == null)
             {
                 config = new Configuracao
                 {
+                    EmpresaId = empresaId,
                     NomeEmpresa = "Milton Cardoso",
                     SubtituloEmpresa = "Assistência Técnica",
                     TituloPrincipal = "Conserto de Eletrodomésticos",
@@ -85,7 +97,7 @@ namespace AssistenciaTecnica.Controllers
                 alterou = true;
             }
 
-            if (string.IsNullOrWhiteSpace(config.NomeEmpresa) || config.NomeEmpresa == "Assistência Técnica")
+            if (string.IsNullOrWhiteSpace(config.NomeEmpresa))
             {
                 config.NomeEmpresa = "Milton Cardoso";
                 alterou = true;
@@ -170,9 +182,14 @@ namespace AssistenciaTecnica.Controllers
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
+            var empresaId = EmpresaId();
+
+            if (empresaId == 0)
+                return RedirectToAction("Login", "Auth");
+
             var configBanco = await _context.Configuracoes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == config.Id);
+                .FirstOrDefaultAsync(c => c.EmpresaId == empresaId);
 
             if (configBanco == null)
                 return RedirectToAction("Configuracao");
@@ -180,6 +197,9 @@ namespace AssistenciaTecnica.Controllers
             var novaLogo = await SalvarImagemAsync(logo);
             var novaDestaque1 = await SalvarImagemAsync(destaque1);
             var novaDestaque2 = await SalvarImagemAsync(destaque2);
+
+            config.Id = configBanco.Id;
+            config.EmpresaId = empresaId;
 
             config.LogoUrl = string.IsNullOrWhiteSpace(novaLogo)
                 ? configBanco.LogoUrl
