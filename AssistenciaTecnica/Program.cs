@@ -31,6 +31,15 @@ builder.Services.AddSession();
 var app = builder.Build();
 
 
+// CRIA TABELAS NOVAS AUTOMATICAMENTE
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    db.Database.EnsureCreated();
+}
+
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
