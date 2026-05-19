@@ -45,9 +45,29 @@ using (var scope = app.Services.CreateScope())
 
         db.Database.ExecuteSqlRaw(@"
             IF COL_LENGTH('Configuracoes', 'EmpresaId') IS NULL
-            BEGIN
                 ALTER TABLE Configuracoes ADD EmpresaId INT NOT NULL DEFAULT 1
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            IF COL_LENGTH('Clientes', 'EmpresaId') IS NULL
+                ALTER TABLE Clientes ADD EmpresaId INT NOT NULL DEFAULT 1
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            IF COL_LENGTH('Servicos', 'EmpresaId') IS NULL
+                ALTER TABLE Servicos ADD EmpresaId INT NOT NULL DEFAULT 1
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            IF COL_LENGTH('Servicos', 'Icone') IS NOT NULL
+            BEGIN
+                ALTER TABLE Servicos DROP COLUMN Icone
             END
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            IF COL_LENGTH('OrdensServico', 'EmpresaId') IS NULL
+                ALTER TABLE OrdensServico ADD EmpresaId INT NOT NULL DEFAULT 1
         ");
     }
     else
@@ -66,6 +86,26 @@ using (var scope = app.Services.CreateScope())
 
         db.Database.ExecuteSqlRaw(@"
             ALTER TABLE ""Configuracoes""
+            ADD COLUMN IF NOT EXISTS ""EmpresaId"" integer NOT NULL DEFAULT 1;
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            ALTER TABLE ""Clientes""
+            ADD COLUMN IF NOT EXISTS ""EmpresaId"" integer NOT NULL DEFAULT 1;
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            ALTER TABLE ""Servicos""
+            ADD COLUMN IF NOT EXISTS ""EmpresaId"" integer NOT NULL DEFAULT 1;
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            ALTER TABLE ""Servicos""
+            DROP COLUMN IF EXISTS ""Icone"";
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            ALTER TABLE ""OrdensServico""
             ADD COLUMN IF NOT EXISTS ""EmpresaId"" integer NOT NULL DEFAULT 1;
         ");
     }

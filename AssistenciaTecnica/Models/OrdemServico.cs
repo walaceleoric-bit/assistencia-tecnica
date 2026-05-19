@@ -7,6 +7,8 @@ namespace AssistenciaTecnica.Models
     {
         public int Id { get; set; }
 
+        public int EmpresaId { get; set; }
+
         [Required]
         public int ClienteId { get; set; }
 
@@ -32,7 +34,7 @@ namespace AssistenciaTecnica.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Valor { get; set; }
 
-        public DateTime DataAbertura { get; set; } = DateTime.Now;
+        public DateTime DataAbertura { get; set; } = DateTime.UtcNow;
 
         public DateTime? DataFinalizacao { get; set; }
     }

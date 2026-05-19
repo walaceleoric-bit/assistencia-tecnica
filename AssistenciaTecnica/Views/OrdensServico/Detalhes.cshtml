@@ -35,26 +35,95 @@
         : $"https://wa.me/{numeroWhatsApp}?text={Uri.EscapeDataString(mensagemStatus)}";
 }
 
-<div class="container mt-4">
+<style>
 
-    <a class="back-button"
-           asp-action="Index">
+    @@media print {
 
-        ← Voltar
+        .no-print {
+            display: none !important;
+        }
 
-    </a>
+        body {
+            background: white !important;
+        }
+
+        .form-card {
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
+
+    .pdf-button {
+        background: linear-gradient(135deg, #0d6efd, #003b99);
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: .2s;
+        text-decoration: none;
+    }
+
+        .pdf-button:hover {
+            transform: translateY(-2px);
+            opacity: .95;
+            color: white;
+        }
+
+</style>
+
+<div class="container mt-4 no-print">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <a class="back-button"
+               asp-action="Index">
+
+            ← Voltar
+
+        </a>
+
+        <button onclick="window.print()" class="pdf-button">
+
+            📄 Baixar PDF
+
+        </button>
+
+    </div>
 
 </div>
 
-
 <div class="form-card">
 
-    <h2>
-        Ordem #@Model.Id
-    </h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
+        <div>
 
-    <div class="whatsapp-actions">
+            <h2 class="mb-1">
+                Ordem de Serviço #@Model.Id
+            </h2>
+
+            <p style="opacity:.7; margin:0;">
+                Relatório completo da assistência técnica
+            </p>
+
+        </div>
+
+        <div style="text-align:right;">
+
+            <h4 style="margin:0;">
+                Air Plane
+            </h4>
+
+            <small>
+                Assistência Técnica
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="whatsapp-actions no-print">
 
         <a class="btn-main"
                href="@linkOrcamento"
@@ -64,7 +133,6 @@
 
         </a>
 
-
         <a class="btn-main"
                href="@linkPronto"
                target="_blank">
@@ -72,7 +140,6 @@
             Avisar que está pronto
 
         </a>
-
 
         <a class="btn-outline-main"
                href="@linkStatus"
@@ -84,9 +151,7 @@
 
     </div>
 
-
     <hr />
-
 
     <p><b>Cliente:</b> @Model.Cliente?.Nome</p>
 
@@ -96,7 +161,6 @@
 
     <p><b>Aparelho:</b> @Model.Aparelho</p>
 
-
     @if (!string.IsNullOrWhiteSpace(Model.FotoUrl))
     {
         <img src="@Model.FotoUrl"
@@ -104,25 +168,47 @@
              alt="Foto do aparelho" />
     }
 
+    <p><b>Marca/Modelo:</b> @Model.MarcaModelo</p>
 
-    <p><b>Marca:</b> @Model.MarcaModelo</p>
+    <p><b>Defeito relatado:</b> @Model.DefeitoRelatado</p>
 
-    <p><b>Defeito:</b> @Model.DefeitoRelatado</p>
+    <p><b>Status atual:</b> @Model.Status</p>
 
-    <p><b>Status:</b> @Model.Status</p>
+    <p>
+        <b>Valor do serviço:</b>
 
-    <p><b>Valor:</b> R$ @Model.Valor.ToString("N2")</p>
+        <span style="
+            background:#e8fff1;
+            color:#008a43;
+            padding:6px 12px;
+            border-radius:10px;
+            font-weight:700;
+            ">
+            R$ @Model.Valor.ToString("N2")
+        </span>
+    </p>
 
-    <p><b>Observação:</b> @Model.ObservacaoTecnica</p>
+    <p><b>Observação técnica:</b> @Model.ObservacaoTecnica</p>
 
-    <p><b>Data abertura:</b> @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")</p>
+    <p>
+        <b>Data de abertura:</b>
+        @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")
+    </p>
 
     @if (Model.DataFinalizacao != null)
     {
         <p>
-            <b>Data finalização:</b>
+            <b>Data de finalização:</b>
             @Model.DataFinalizacao.Value.ToString("dd/MM/yyyy HH:mm")
         </p>
     }
+
+    <hr />
+
+    <div style="text-align:center; opacity:.7; margin-top:40px;">
+
+        Documento gerado automaticamente pelo sistema.
+
+    </div>
 
 </div>

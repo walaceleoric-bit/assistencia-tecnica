@@ -5,6 +5,7 @@
 }
 
 <div class="container mt-4">
+
     <a class="back-button"
            asp-controller="Clientes"
            asp-action="Index">
@@ -12,37 +13,34 @@
         ← Voltar
 
     </a>
-</div>
 
+</div>
 
 <div class="form-card">
 
-    <h2>Detalhes do Cliente</h2>
+    <h2>👤 Detalhes do Cliente</h2>
 
-    <p><b>Nome:</b> @Model.Nome</p>
+    <div class="mt-4">
 
-    <p><b>CPF:</b> @Model.Cpf</p>
+        <p><strong>Nome:</strong> @Model.Nome</p>
 
-    <p><b>Telefone:</b> @Model.Telefone</p>
+        <p><strong>CPF:</strong> @Model.Cpf</p>
 
-    <p><b>Email:</b> @Model.Email</p>
+        <p><strong>Telefone:</strong> @Model.Telefone</p>
 
-    <p><b>Endereço:</b> @Model.Endereco</p>
+        <p><strong>Email:</strong> @Model.Email</p>
 
-    <p><b>Cidade:</b> @Model.Cidade</p>
+        <p><strong>Endereço:</strong> @Model.Endereco</p>
 
-    <p><b>Observação:</b> @Model.Observacao</p>
+        <p><strong>Cidade:</strong> @Model.Cidade</p>
 
-    <p><b>Data de cadastro:</b> @Model.DataCadastro.ToString("dd/MM/yyyy")</p>
+        <p><strong>Observação:</strong> @Model.Observacao</p>
 
+        <p>
+            <strong>Cadastro:</strong>
+            @Model.DataCadastro.ToString("dd/MM/yyyy HH:mm")
+        </p>
 
-    <a class="btn-main mt-3"
-           asp-controller="Clientes"
-           asp-action="Editar"
-           asp-route-id="@Model.Id">
-
-        Editar Cliente
-
-    </a>
+    </div>
 
 </div>

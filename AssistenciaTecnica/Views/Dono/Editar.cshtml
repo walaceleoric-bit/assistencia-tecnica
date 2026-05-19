@@ -1,6 +1,7 @@
 ﻿@model AssistenciaTecnica.Models.Empresa
 
 @{
+    Layout = "_LayoutDono";
     ViewData["Title"] = "Editar Empresa";
 }
 
@@ -13,7 +14,6 @@
 <form asp-controller="Dono" asp-action="Editar" method="post" class="form-card">
 
     <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="DataCadastro" />
 
     <h2>Editar Empresa/Inquilino</h2>
 

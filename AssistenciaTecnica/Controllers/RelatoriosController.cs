@@ -19,13 +19,24 @@ namespace AssistenciaTecnica.Controllers
             return HttpContext.Session.GetString("ADM_LOGADO") == "SIM";
         }
 
+        private int EmpresaId()
+        {
+            return HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
+        }
+
         public async Task<IActionResult> Index()
         {
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
+            var empresaId = EmpresaId();
+
+            if (empresaId == 0)
+                return RedirectToAction("Login", "Auth");
+
             var ordens = await _context.OrdensServico
                 .Include(o => o.Servico)
+                .Where(o => o.EmpresaId == empresaId)
                 .ToListAsync();
 
             var finalizadas = ordens
@@ -38,8 +49,12 @@ namespace AssistenciaTecnica.Controllers
 
             var model = new RelatorioViewModel();
 
-            model.TotalClientes = await _context.Clientes.CountAsync();
-            model.TotalServicos = await _context.Servicos.CountAsync();
+            model.TotalClientes = await _context.Clientes
+                .CountAsync(c => c.EmpresaId == empresaId);
+
+            model.TotalServicos = await _context.Servicos
+                .CountAsync(s => s.EmpresaId == empresaId);
+
             model.TotalOrdens = ordens.Count;
 
             model.OrdensAbertas = abertas.Count;

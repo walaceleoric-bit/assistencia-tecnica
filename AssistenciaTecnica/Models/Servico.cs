@@ -6,12 +6,12 @@ namespace AssistenciaTecnica.Models
     {
         public int Id { get; set; }
 
+        public int EmpresaId { get; set; }
+
         [Required]
         public string Nome { get; set; } = "";
 
         public string Descricao { get; set; } = "";
-
-        public string Icone { get; set; } = "🛠️";
 
         public bool Ativo { get; set; } = true;
     }

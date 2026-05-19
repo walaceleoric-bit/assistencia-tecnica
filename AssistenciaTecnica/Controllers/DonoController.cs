@@ -21,26 +21,13 @@ namespace AssistenciaTecnica.Controllers
 
         public IActionResult Login()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(string usuario, string senha)
-        {
-            if (usuario == "wlc" && senha == "123456")
-            {
-                HttpContext.Session.SetString("DONO_LOGADO", "SIM");
-                return RedirectToAction("Index");
-            }
-
-            TempData["Erro"] = "Usuário ou senha inválidos.";
-            return RedirectToAction("Login");
+            return RedirectToAction("Login", "Auth");
         }
 
         public async Task<IActionResult> Index()
         {
             if (!DonoLogado())
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Auth");
 
             var empresas = await _context.Empresas
                 .OrderByDescending(e => e.DataCadastro)
@@ -52,7 +39,7 @@ namespace AssistenciaTecnica.Controllers
         public IActionResult Criar()
         {
             if (!DonoLogado())
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Auth");
 
             return View(new Empresa());
         }
@@ -61,10 +48,14 @@ namespace AssistenciaTecnica.Controllers
         public async Task<IActionResult> Criar(Empresa empresa)
         {
             if (!DonoLogado())
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Auth");
 
-            empresa.DataCadastro = DateTime.UtcNow;
+            empresa.NomeEmpresa ??= "";
+            empresa.Usuario ??= "";
+            empresa.Senha ??= "";
+            empresa.WhatsApp ??= "";
             empresa.Ativo = true;
+            empresa.DataCadastro = DateTime.UtcNow;
 
             _context.Empresas.Add(empresa);
             await _context.SaveChangesAsync();
@@ -75,7 +66,7 @@ namespace AssistenciaTecnica.Controllers
         public async Task<IActionResult> Editar(int id)
         {
             if (!DonoLogado())
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Auth");
 
             var empresa = await _context.Empresas.FindAsync(id);
 
@@ -89,9 +80,20 @@ namespace AssistenciaTecnica.Controllers
         public async Task<IActionResult> Editar(Empresa empresa)
         {
             if (!DonoLogado())
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Auth");
 
-            _context.Empresas.Update(empresa);
+            var empresaBanco = await _context.Empresas
+                .FirstOrDefaultAsync(e => e.Id == empresa.Id);
+
+            if (empresaBanco == null)
+                return RedirectToAction("Index");
+
+            empresaBanco.NomeEmpresa = empresa.NomeEmpresa ?? "";
+            empresaBanco.Usuario = empresa.Usuario ?? "";
+            empresaBanco.Senha = empresa.Senha ?? "";
+            empresaBanco.WhatsApp = empresa.WhatsApp ?? "";
+            empresaBanco.Ativo = empresa.Ativo;
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
@@ -100,7 +102,7 @@ namespace AssistenciaTecnica.Controllers
         public async Task<IActionResult> AlternarStatus(int id)
         {
             if (!DonoLogado())
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Auth");
 
             var empresa = await _context.Empresas.FindAsync(id);
 
@@ -115,7 +117,7 @@ namespace AssistenciaTecnica.Controllers
 
         public IActionResult Sair()
         {
-            HttpContext.Session.Remove("DONO_LOGADO");
+            HttpContext.Session.Clear();
             return RedirectToAction("Landing", "Home");
         }
     }

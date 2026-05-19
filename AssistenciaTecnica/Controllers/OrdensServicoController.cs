@@ -22,16 +22,29 @@ namespace AssistenciaTecnica.Controllers
             return HttpContext.Session.GetString("ADM_LOGADO") == "SIM";
         }
 
+        private int EmpresaId()
+        {
+            return HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
+        }
+
         private async Task CarregarCombos()
         {
+            var empresaId = EmpresaId();
+
             ViewBag.Clientes = new SelectList(
-                await _context.Clientes.OrderBy(c => c.Nome).ToListAsync(),
+                await _context.Clientes
+                    .Where(c => c.EmpresaId == empresaId)
+                    .OrderBy(c => c.Nome)
+                    .ToListAsync(),
                 "Id",
                 "Nome"
             );
 
             ViewBag.Servicos = new SelectList(
-                await _context.Servicos.Where(s => s.Ativo).OrderBy(s => s.Nome).ToListAsync(),
+                await _context.Servicos
+                    .Where(s => s.EmpresaId == empresaId && s.Ativo)
+                    .OrderBy(s => s.Nome)
+                    .ToListAsync(),
                 "Id",
                 "Nome"
             );
@@ -53,7 +66,12 @@ namespace AssistenciaTecnica.Controllers
             if (foto == null || foto.Length == 0)
                 return "";
 
-            var pastaUploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "ordens");
+            var webRoot = _webHostEnvironment.WebRootPath;
+
+            if (string.IsNullOrWhiteSpace(webRoot))
+                webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+            var pastaUploads = Path.Combine(webRoot, "uploads", "ordens");
 
             if (!Directory.Exists(pastaUploads))
                 Directory.CreateDirectory(pastaUploads);
@@ -75,9 +93,12 @@ namespace AssistenciaTecnica.Controllers
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
+            var empresaId = EmpresaId();
+
             var ordens = await _context.OrdensServico
                 .Include(o => o.Cliente)
                 .Include(o => o.Servico)
+                .Where(o => o.EmpresaId == empresaId)
                 .OrderByDescending(o => o.DataAbertura)
                 .ToListAsync();
 
@@ -99,12 +120,36 @@ namespace AssistenciaTecnica.Controllers
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
-            ordem.DataAbertura = DateTime.Now;
+            var empresaId = EmpresaId();
+
+            if (empresaId == 0)
+                return RedirectToAction("Login", "Auth");
+
+            ordem.EmpresaId = empresaId;
+            ordem.DataAbertura = DateTime.UtcNow;
             ordem.FotoUrl = await SalvarFotoAsync(foto);
+
+            ordem.Aparelho ??= "";
+            ordem.MarcaModelo ??= "";
+            ordem.DefeitoRelatado ??= "";
+            ordem.ObservacaoTecnica ??= "";
+            ordem.Status ??= "Aberta";
+
+            ModelState.Remove("EmpresaId");
+            ModelState.Remove("DataAbertura");
+            ModelState.Remove("FotoUrl");
+
+            if (!ModelState.IsValid)
+            {
+                await CarregarCombos();
+                TempData["Erro"] = "Verifique os campos obrigatórios.";
+                return View(ordem);
+            }
 
             _context.OrdensServico.Add(ordem);
             await _context.SaveChangesAsync();
 
+            TempData["Sucesso"] = "Ordem cadastrada com sucesso!";
             return RedirectToAction("Index");
         }
 
@@ -113,7 +158,12 @@ namespace AssistenciaTecnica.Controllers
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
-            var ordem = await _context.OrdensServico.FindAsync(id);
+            var empresaId = EmpresaId();
+
+            var ordem = await _context.OrdensServico
+                .FirstOrDefaultAsync(o =>
+                    o.Id == id &&
+                    o.EmpresaId == empresaId);
 
             if (ordem == null)
                 return RedirectToAction("Index");
@@ -128,26 +178,54 @@ namespace AssistenciaTecnica.Controllers
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
-            var ordemBanco = await _context.OrdensServico.AsNoTracking().FirstOrDefaultAsync(o => o.Id == ordem.Id);
+            var empresaId = EmpresaId();
+
+            var ordemBanco = await _context.OrdensServico
+                .FirstOrDefaultAsync(o =>
+                    o.Id == ordem.Id &&
+                    o.EmpresaId == empresaId);
 
             if (ordemBanco == null)
                 return RedirectToAction("Index");
 
+            ordem.Aparelho ??= "";
+            ordem.MarcaModelo ??= "";
+            ordem.DefeitoRelatado ??= "";
+            ordem.ObservacaoTecnica ??= "";
+            ordem.Status ??= "Aberta";
+
+            ModelState.Remove("EmpresaId");
+            ModelState.Remove("DataAbertura");
+            ModelState.Remove("FotoUrl");
+
+            if (!ModelState.IsValid)
+            {
+                await CarregarCombos();
+                TempData["Erro"] = "Verifique os campos obrigatórios.";
+                return View(ordem);
+            }
+
+            ordemBanco.ClienteId = ordem.ClienteId;
+            ordemBanco.ServicoId = ordem.ServicoId;
+            ordemBanco.Aparelho = ordem.Aparelho;
+            ordemBanco.MarcaModelo = ordem.MarcaModelo;
+            ordemBanco.DefeitoRelatado = ordem.DefeitoRelatado;
+            ordemBanco.ObservacaoTecnica = ordem.ObservacaoTecnica;
+            ordemBanco.Status = ordem.Status;
+            ordemBanco.Valor = ordem.Valor;
+
             if (foto != null && foto.Length > 0)
-            {
-                ordem.FotoUrl = await SalvarFotoAsync(foto);
-            }
-            else
-            {
-                ordem.FotoUrl = ordemBanco.FotoUrl;
-            }
+                ordemBanco.FotoUrl = await SalvarFotoAsync(foto);
 
-            if (ordem.Status == "Finalizada" && ordem.DataFinalizacao == null)
-                ordem.DataFinalizacao = DateTime.Now;
+            if (ordemBanco.Status == "Finalizada" && ordemBanco.DataFinalizacao == null)
+                ordemBanco.DataFinalizacao = DateTime.UtcNow;
 
-            _context.OrdensServico.Update(ordem);
+            if (ordemBanco.Status != "Finalizada")
+                ordemBanco.DataFinalizacao = null;
+
             await _context.SaveChangesAsync();
 
+            TempData["Sucesso"] = "Ordem atualizada com sucesso!";
             return RedirectToAction("Index");
         }
 
@@ -156,10 +234,14 @@ namespace AssistenciaTecnica.Controllers
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
+            var empresaId = EmpresaId();
+
             var ordem = await _context.OrdensServico
                 .Include(o => o.Cliente)
                 .Include(o => o.Servico)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                .FirstOrDefaultAsync(o =>
+                    o.Id == id &&
+                    o.EmpresaId == empresaId);
 
             if (ordem == null)
                 return RedirectToAction("Index");
@@ -172,12 +254,19 @@ namespace AssistenciaTecnica.Controllers
             if (!AdminLogado())
                 return RedirectToAction("Login", "Auth");
 
-            var ordem = await _context.OrdensServico.FindAsync(id);
+            var empresaId = EmpresaId();
+
+            var ordem = await _context.OrdensServico
+                .FirstOrDefaultAsync(o =>
+                    o.Id == id &&
+                    o.EmpresaId == empresaId);
 
             if (ordem != null)
             {
                 _context.OrdensServico.Remove(ordem);
                 await _context.SaveChangesAsync();
+
+                TempData["Sucesso"] = "Ordem excluída com sucesso!";
             }
 
             return RedirectToAction("Index");
