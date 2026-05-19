@@ -54,6 +54,16 @@ using (var scope = app.Services.CreateScope())
         ");
 
         db.Database.ExecuteSqlRaw(@"
+            IF COL_LENGTH('Clientes', 'UsuarioCliente') IS NULL
+                ALTER TABLE Clientes ADD UsuarioCliente NVARCHAR(MAX) NOT NULL DEFAULT ''
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            IF COL_LENGTH('Clientes', 'SenhaCliente') IS NULL
+                ALTER TABLE Clientes ADD SenhaCliente NVARCHAR(MAX) NOT NULL DEFAULT ''
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
             IF COL_LENGTH('Servicos', 'EmpresaId') IS NULL
                 ALTER TABLE Servicos ADD EmpresaId INT NOT NULL DEFAULT 1
         ");
@@ -92,6 +102,16 @@ using (var scope = app.Services.CreateScope())
         db.Database.ExecuteSqlRaw(@"
             ALTER TABLE ""Clientes""
             ADD COLUMN IF NOT EXISTS ""EmpresaId"" integer NOT NULL DEFAULT 1;
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            ALTER TABLE ""Clientes""
+            ADD COLUMN IF NOT EXISTS ""UsuarioCliente"" text NOT NULL DEFAULT '';
+        ");
+
+        db.Database.ExecuteSqlRaw(@"
+            ALTER TABLE ""Clientes""
+            ADD COLUMN IF NOT EXISTS ""SenhaCliente"" text NOT NULL DEFAULT '';
         ");
 
         db.Database.ExecuteSqlRaw(@"

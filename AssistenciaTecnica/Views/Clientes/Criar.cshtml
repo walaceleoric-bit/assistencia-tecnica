@@ -19,11 +19,9 @@
     <h2>Novo Cliente</h2>
 
     <div class="alert alert-info mt-3 mb-4">
-
-        <strong>ℹ️ Cadastro rápido:</strong><br />
-
-        Preencha todos os <strong>Campos</strong> para salvar o cliente.<br />
-
+        <strong>ℹ️ Cadastro do cliente:</strong><br />
+        Preencha os dados do cliente e defina um <strong>usuário</strong> e uma <strong>senha</strong>
+        para ele acompanhar os próprios serviços futuramente.
     </div>
 
     @if (TempData["Erro"] != null)
@@ -32,6 +30,8 @@
             @TempData["Erro"]
         </div>
     }
+
+    <h4 class="mt-4">Dados pessoais</h4>
 
     <label>Nome</label>
     <input asp-for="Nome"
@@ -68,6 +68,18 @@
     <label>Cidade</label>
     <input asp-for="Cidade"
            class="form-control" />
+
+    <h4 class="mt-4">Acesso do cliente</h4>
+
+    <label>Usuário do cliente</label>
+    <input asp-for="UsuarioCliente"
+           class="form-control"
+           placeholder="Ex: izaque123" />
+
+    <label>Senha do cliente</label>
+    <input asp-for="SenhaCliente"
+           class="form-control"
+           placeholder="Ex: 123456" />
 
     <label>Observação</label>
     <textarea asp-for="Observacao"

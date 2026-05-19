@@ -14,6 +14,10 @@ namespace AssistenciaTecnica.Models
         [Required(ErrorMessage = "Informe o CPF.")]
         public string Cpf { get; set; } = "";
 
+        public string UsuarioCliente { get; set; } = "";
+
+        public string SenhaCliente { get; set; } = "";
+
         public string Telefone { get; set; } = "";
 
         public string Email { get; set; } = "";

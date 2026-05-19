@@ -1,0 +1,65 @@
+﻿@model List<AssistenciaTecnica.Models.OrdemServico>
+
+@{
+    ViewData["Title"] = "Meus Serviços";
+    var nomeCliente = Context.Session.GetString("CLIENTE_NOME") ?? "Cliente";
+}
+
+<div class="container mt-4">
+    <a class="back-button"
+           asp-controller="AreaCliente"
+           asp-action="Sair">
+        ← Sair
+    </a>
+</div>
+
+<div class="admin-hero">
+    <h1>👋 Olá, @nomeCliente</h1>
+    <p>Acompanhe aqui os serviços cadastrados para você.</p>
+</div>
+
+<div class="container mb-5">
+
+    <div class="table-card mt-4">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Serviço</th>
+                    <th>Aparelho</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                    <th>Abertura</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6">
+                            Nenhum serviço encontrado no momento.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.Id</td>
+                            <td>@item.Servico?.Nome</td>
+                            <td>@item.Aparelho</td>
+                            <td>@item.Status</td>
+                            <td>R$ @item.Valor.ToString("N2")</td>
+                            <td>@item.DataAbertura.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

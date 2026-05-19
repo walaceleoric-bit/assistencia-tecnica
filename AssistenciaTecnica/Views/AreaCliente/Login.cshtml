@@ -1,0 +1,47 @@
+﻿@{
+    Layout = "_LayoutPublico";
+    ViewData["Title"] = "Login do Cliente";
+}
+
+<div class="login-page">
+
+    <a asp-controller="Home" asp-action="Landing">
+        ← Voltar
+    </a>
+
+    <div class="login-card">
+
+        <h1>Cliente</h1>
+
+        @if (TempData["Erro"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Erro"]
+            </div>
+        }
+
+        <form asp-controller="AreaCliente"
+              asp-action="Login"
+              method="post">
+
+            <label>Usuário</label>
+            <input name="usuario"
+                   class="form-control"
+                   placeholder="Digite seu usuário" />
+
+            <label class="mt-3">Senha</label>
+            <input name="senha"
+                   type="password"
+                   class="form-control"
+                   placeholder="Digite sua senha" />
+
+            <button type="submit"
+                    class="btn-main mt-4 w-100">
+                Entrar
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

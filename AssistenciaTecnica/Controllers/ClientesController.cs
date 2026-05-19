@@ -24,7 +24,6 @@ namespace AssistenciaTecnica.Controllers
             return HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
         }
 
-        // LISTA
         public async Task<IActionResult> Index()
         {
             if (!AdminLogado())
@@ -40,7 +39,6 @@ namespace AssistenciaTecnica.Controllers
             return View(clientes);
         }
 
-        // DETALHES
         public async Task<IActionResult> Detalhes(int id)
         {
             if (!AdminLogado())
@@ -59,7 +57,6 @@ namespace AssistenciaTecnica.Controllers
             return View(cliente);
         }
 
-        // CRIAR GET
         public IActionResult Criar()
         {
             if (!AdminLogado())
@@ -68,7 +65,6 @@ namespace AssistenciaTecnica.Controllers
             return View(new Cliente());
         }
 
-        // CRIAR POST
         [HttpPost]
         public async Task<IActionResult> Criar(Cliente cliente)
         {
@@ -85,6 +81,8 @@ namespace AssistenciaTecnica.Controllers
 
             cliente.Nome ??= "";
             cliente.Cpf ??= "";
+            cliente.UsuarioCliente ??= "";
+            cliente.SenhaCliente ??= "";
             cliente.Telefone ??= "";
             cliente.Email ??= "";
             cliente.Endereco ??= "";
@@ -100,16 +98,24 @@ namespace AssistenciaTecnica.Controllers
                 return View(cliente);
             }
 
-            _context.Clientes.Add(cliente);
+            var usuarioExiste = await _context.Clientes.AnyAsync(c =>
+                c.EmpresaId == empresaId &&
+                c.UsuarioCliente == cliente.UsuarioCliente &&
+                cliente.UsuarioCliente != "");
 
+            if (usuarioExiste)
+            {
+                TempData["Erro"] = "Este usuário de acesso já está sendo usado por outro cliente.";
+                return View(cliente);
+            }
+
+            _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
 
             TempData["Sucesso"] = "Cliente cadastrado com sucesso!";
-
             return RedirectToAction(nameof(Index));
         }
 
-        // EDITAR GET
         public async Task<IActionResult> Editar(int id)
         {
             if (!AdminLogado())
@@ -128,7 +134,6 @@ namespace AssistenciaTecnica.Controllers
             return View(cliente);
         }
 
-        // EDITAR POST
         [HttpPost]
         public async Task<IActionResult> Editar(Cliente cliente)
         {
@@ -150,6 +155,8 @@ namespace AssistenciaTecnica.Controllers
 
             cliente.Nome ??= "";
             cliente.Cpf ??= "";
+            cliente.UsuarioCliente ??= "";
+            cliente.SenhaCliente ??= "";
             cliente.Telefone ??= "";
             cliente.Email ??= "";
             cliente.Endereco ??= "";
@@ -165,8 +172,22 @@ namespace AssistenciaTecnica.Controllers
                 return View(cliente);
             }
 
+            var usuarioExiste = await _context.Clientes.AnyAsync(c =>
+                c.EmpresaId == empresaId &&
+                c.Id != cliente.Id &&
+                c.UsuarioCliente == cliente.UsuarioCliente &&
+                cliente.UsuarioCliente != "");
+
+            if (usuarioExiste)
+            {
+                TempData["Erro"] = "Este usuário de acesso já está sendo usado por outro cliente.";
+                return View(cliente);
+            }
+
             clienteBanco.Nome = cliente.Nome;
             clienteBanco.Cpf = cliente.Cpf;
+            clienteBanco.UsuarioCliente = cliente.UsuarioCliente;
+            clienteBanco.SenhaCliente = cliente.SenhaCliente;
             clienteBanco.Telefone = cliente.Telefone;
             clienteBanco.Email = cliente.Email;
             clienteBanco.Endereco = cliente.Endereco;
@@ -176,11 +197,9 @@ namespace AssistenciaTecnica.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Sucesso"] = "Cliente atualizado com sucesso!";
-
             return RedirectToAction(nameof(Index));
         }
 
-        // EXCLUIR
         public async Task<IActionResult> Excluir(int id)
         {
             if (!AdminLogado())
@@ -196,7 +215,6 @@ namespace AssistenciaTecnica.Controllers
             if (cliente != null)
             {
                 _context.Clientes.Remove(cliente);
-
                 await _context.SaveChangesAsync();
 
                 TempData["Sucesso"] = "Cliente excluído com sucesso!";

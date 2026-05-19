@@ -8,26 +8,27 @@
     <a class="back-button"
            asp-controller="Clientes"
            asp-action="Index">
-
         ← Voltar
-
     </a>
 </div>
-
 
 <form asp-action="Editar"
       method="post"
       class="form-card">
 
-    <input type="hidden"
-           asp-for="Id" />
-
-    <input type="hidden"
-           asp-for="DataCadastro" />
-
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="DataCadastro" />
 
     <h2>Editar Cliente</h2>
 
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger mt-3">
+            @TempData["Erro"]
+        </div>
+    }
+
+    <h4 class="mt-4">Dados pessoais</h4>
 
     <label>Nome</label>
     <input asp-for="Nome"
@@ -36,48 +37,71 @@
     <span asp-validation-for="Nome"
           class="text-danger"></span>
 
-
     <label>CPF</label>
     <input asp-for="Cpf"
            id="cpf"
            class="form-control"
+           maxlength="14"
+           inputmode="numeric"
            placeholder="000.000.000-00" />
 
     <span asp-validation-for="Cpf"
           class="text-danger"></span>
 
-
     <label>Telefone</label>
     <input asp-for="Telefone"
            class="form-control" />
-
 
     <label>Email</label>
     <input asp-for="Email"
            class="form-control" />
 
-
     <label>Endereço</label>
     <input asp-for="Endereco"
            class="form-control" />
-
 
     <label>Cidade</label>
     <input asp-for="Cidade"
            class="form-control" />
 
+    <h4 class="mt-4">Acesso do cliente</h4>
+
+    <label>Usuário do cliente</label>
+    <input asp-for="UsuarioCliente"
+           class="form-control"
+           placeholder="Ex: izaque123" />
+
+    <label>Senha do cliente</label>
+    <input asp-for="SenhaCliente"
+           class="form-control"
+           placeholder="Ex: 123456" />
 
     <label>Observação</label>
     <textarea asp-for="Observacao"
               rows="4"
               class="form-control"></textarea>
 
-
     <button type="submit"
             class="btn-main mt-3">
-
         Salvar Alterações
-
     </button>
 
 </form>
+
+<script>
+    const cpfInput = document.getElementById("cpf");
+
+    cpfInput.addEventListener("input", function () {
+        let valor = cpfInput.value.replace(/\D/g, "");
+
+        if (valor.length > 11) {
+            valor = valor.substring(0, 11);
+        }
+
+        valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+        valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+        valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+        cpfInput.value = valor;
+    });
+</script>
