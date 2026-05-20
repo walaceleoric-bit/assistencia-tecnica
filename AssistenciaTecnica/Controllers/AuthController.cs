@@ -17,7 +17,6 @@ namespace AssistenciaTecnica.Controllers
         public async Task<IActionResult> Login()
         {
             await CriarEmpresaPadraoSeNaoExistir();
-
             return View();
         }
 
@@ -26,49 +25,77 @@ namespace AssistenciaTecnica.Controllers
         {
             await CriarEmpresaPadraoSeNaoExistir();
 
-            if (string.IsNullOrWhiteSpace(usuario) ||
-                string.IsNullOrWhiteSpace(senha))
+            if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(senha))
             {
                 TempData["Erro"] = "Digite usuário e senha.";
                 return RedirectToAction("Login");
             }
 
-            // LOGIN DO DONO WLC
-            if (usuario == "wlc" && senha == "123456")
+            var usuarioDigitado = usuario.Trim().ToLower();
+            var senhaDigitada = senha.Trim();
+
+            if (usuarioDigitado == "wlc" && senhaDigitada == "123456")
             {
                 HttpContext.Session.Clear();
-
                 HttpContext.Session.SetString("DONO_LOGADO", "SIM");
 
                 return RedirectToAction("Index", "Dono");
             }
 
-            // LOGIN DAS EMPRESAS / INQUILINOS
             var empresa = await _context.Empresas
                 .FirstOrDefaultAsync(e =>
-                    e.Usuario == usuario &&
-                    e.Senha == senha &&
+                    e.Usuario.ToLower() == usuarioDigitado &&
+                    e.Senha == senhaDigitada &&
                     e.Ativo);
 
-            if (empresa == null)
+            if (empresa != null)
             {
-                TempData["Erro"] = "Usuário ou senha inválidos.";
-                return RedirectToAction("Login");
+                HttpContext.Session.Clear();
+
+                HttpContext.Session.SetString("ADM_LOGADO", "SIM");
+                HttpContext.Session.SetInt32("EMPRESA_ID", empresa.Id);
+                HttpContext.Session.SetString("EMPRESA_NOME", empresa.NomeEmpresa);
+
+                return RedirectToAction("Index", "Admin");
             }
 
-            HttpContext.Session.Clear();
+            var clientes = await _context.Clientes.ToListAsync();
 
-            HttpContext.Session.SetString("ADM_LOGADO", "SIM");
-            HttpContext.Session.SetInt32("EMPRESA_ID", empresa.Id);
-            HttpContext.Session.SetString("EMPRESA_NOME", empresa.NomeEmpresa);
+            var cliente = clientes.FirstOrDefault(c =>
+                (c.UsuarioCliente ?? "").Trim().ToLower() == usuarioDigitado &&
+                (c.SenhaCliente ?? "").Trim() == senhaDigitada);
 
-            return RedirectToAction("Index", "Admin");
+            if (cliente != null)
+            {
+                HttpContext.Session.Clear();
+
+                var empresaDoCliente = await _context.Empresas
+                    .FirstOrDefaultAsync(e => e.Id == cliente.EmpresaId);
+
+                HttpContext.Session.SetString("CLIENTE_LOGADO", "SIM");
+                HttpContext.Session.SetInt32("CLIENTE_ID", cliente.Id);
+                HttpContext.Session.SetInt32("CLIENTE_EMPRESA_ID", cliente.EmpresaId);
+
+                // IMPORTANTE
+                HttpContext.Session.SetInt32("EMPRESA_ID", cliente.EmpresaId);
+
+                HttpContext.Session.SetString("CLIENTE_NOME", cliente.Nome);
+
+                HttpContext.Session.SetString(
+                    "EMPRESA_NOME",
+                    empresaDoCliente?.NomeEmpresa ?? "Empresa"
+                );
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            TempData["Erro"] = "Usuário ou senha inválidos.";
+            return RedirectToAction("Login");
         }
 
         public IActionResult Sair()
         {
             HttpContext.Session.Clear();
-
             return RedirectToAction("Landing", "Home");
         }
 
@@ -89,7 +116,6 @@ namespace AssistenciaTecnica.Controllers
                 };
 
                 _context.Empresas.Add(empresa);
-
                 await _context.SaveChangesAsync();
             }
         }

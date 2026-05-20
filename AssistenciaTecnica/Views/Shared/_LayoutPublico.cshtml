@@ -1,9 +1,30 @@
-﻿<!DOCTYPE html>
+﻿@using AssistenciaTecnica.Data
+@inject AppDbContext Contexto
+@inject IHttpContextAccessor ContextAccessor
+
+@{
+    var http = ContextAccessor.HttpContext;
+
+    var empresaIdAdm = http?.Session.GetInt32("EMPRESA_ID") ?? 0;
+    var empresaIdCliente = http?.Session.GetInt32("CLIENTE_EMPRESA_ID") ?? 0;
+
+    var empresaId = empresaIdAdm > 0 ? empresaIdAdm : empresaIdCliente;
+
+    var clienteLogado = http?.Session.GetString("CLIENTE_LOGADO") == "SIM";
+
+    var configLayout = Contexto.Configuracoes
+        .FirstOrDefault(c => c.EmpresaId == empresaId);
+
+    var nomeEmpresa = configLayout?.NomeEmpresa ?? "Empresa";
+    var logoUrl = configLayout?.LogoUrl ?? "";
+}
+
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"]</title>
+    <title>@ViewData["Title"] - @nomeEmpresa</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -11,16 +32,41 @@
 
 <body>
 
+    <header class="top-menu-pro">
+        <div class="top-brand-center">
+            @if (!string.IsNullOrWhiteSpace(logoUrl))
+            {
+                <img src="@logoUrl" alt="@nomeEmpresa" />
+            }
+        </div>
+
+        <nav class="top-nav-pro">
+            <a asp-controller="Home" asp-action="Index">Início</a>
+
+            @if (clienteLogado)
+            {
+                <a asp-controller="AreaCliente" asp-action="Index">Serviços</a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="Servicos">Serviços</a>
+            }
+
+            <a asp-controller="Home" asp-action="Contato">Contato</a>
+
+            <a class="admin-link-pro" asp-controller="Auth" asp-action="Sair">
+                Sair
+            </a>
+        </nav>
+    </header>
+
     <main>
         @RenderBody()
     </main>
 
     <footer class="site-footer">
-        © @DateTime.Now.Year - WLC Sistemas
+        © @DateTime.Now.Year - @nomeEmpresa
     </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

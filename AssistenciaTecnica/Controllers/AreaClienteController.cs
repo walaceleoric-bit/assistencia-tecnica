@@ -36,16 +36,21 @@ namespace AssistenciaTecnica.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string usuario, string senha)
         {
-            if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(senha))
+            if (string.IsNullOrWhiteSpace(usuario) ||
+                string.IsNullOrWhiteSpace(senha))
             {
                 TempData["Erro"] = "Digite usuário e senha.";
                 return RedirectToAction("Login");
             }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(c =>
-                    c.UsuarioCliente == usuario &&
-                    c.SenhaCliente == senha);
+            usuario = usuario.Trim().ToLower();
+            senha = senha.Trim();
+
+            var clientes = await _context.Clientes.ToListAsync();
+
+            var cliente = clientes.FirstOrDefault(c =>
+                (c.UsuarioCliente ?? "").Trim().ToLower() == usuario &&
+                (c.SenhaCliente ?? "").Trim() == senha);
 
             if (cliente == null)
             {
@@ -66,7 +71,9 @@ namespace AssistenciaTecnica.Controllers
         public async Task<IActionResult> Index()
         {
             if (!ClienteLogado())
+            {
                 return RedirectToAction("Login");
+            }
 
             var clienteId = ClienteId();
             var empresaId = EmpresaId();
@@ -85,6 +92,7 @@ namespace AssistenciaTecnica.Controllers
         public IActionResult Sair()
         {
             HttpContext.Session.Clear();
+
             return RedirectToAction("Landing", "Home");
         }
     }

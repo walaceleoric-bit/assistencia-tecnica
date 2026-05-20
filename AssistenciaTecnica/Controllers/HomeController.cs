@@ -22,7 +22,17 @@ namespace AssistenciaTecnica.Controllers
 
         private int EmpresaId()
         {
-            return HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
+            var empresaAdm = HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
+
+            if (empresaAdm > 0)
+                return empresaAdm;
+
+            var empresaCliente = HttpContext.Session.GetInt32("CLIENTE_EMPRESA_ID") ?? 0;
+
+            if (empresaCliente > 0)
+                return empresaCliente;
+
+            return 0;
         }
 
         private async Task<Configuracao> ObterConfiguracaoDaEmpresa()
@@ -66,6 +76,9 @@ namespace AssistenciaTecnica.Controllers
 
         public IActionResult Servicos()
         {
+            if (HttpContext.Session.GetString("CLIENTE_LOGADO") == "SIM")
+                return RedirectToAction("Index", "AreaCliente");
+
             return View();
         }
 
