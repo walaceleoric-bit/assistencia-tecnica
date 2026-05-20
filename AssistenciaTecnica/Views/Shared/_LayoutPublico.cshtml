@@ -11,6 +11,13 @@
     var empresaId = empresaIdAdm > 0 ? empresaIdAdm : empresaIdCliente;
 
     var clienteLogado = http?.Session.GetString("CLIENTE_LOGADO") == "SIM";
+    var admLogado = http?.Session.GetString("ADM_LOGADO") == "SIM";
+
+    var estaNaLanding =
+        ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
+        ViewContext.RouteData.Values["action"]?.ToString() == "Landing";
+
+    var logado = (clienteLogado || admLogado) && !estaNaLanding;
 
     var configLayout = Contexto.Configuracoes
         .FirstOrDefault(c => c.EmpresaId == empresaId);
@@ -24,6 +31,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>@ViewData["Title"] - @nomeEmpresa</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -32,41 +40,47 @@
 
 <body>
 
-    <header class="top-menu-pro">
-        <div class="top-brand-center">
-            @if (!string.IsNullOrWhiteSpace(logoUrl))
-            {
-                <img src="@logoUrl" alt="@nomeEmpresa" />
-            }
-        </div>
+    @if (logado)
+    {
+        <header class="top-menu-pro">
+            <div class="top-brand-center">
+                @if (!string.IsNullOrWhiteSpace(logoUrl))
+                {
+                    <img src="@logoUrl" alt="@nomeEmpresa" />
+                }
+            </div>
 
-        <nav class="top-nav-pro">
-            <a asp-controller="Home" asp-action="Index">Início</a>
+            <nav class="top-nav-pro">
+                <a asp-controller="Home" asp-action="Index">Início</a>
 
-            @if (clienteLogado)
-            {
-                <a asp-controller="AreaCliente" asp-action="Index">Serviços</a>
-            }
-            else
-            {
-                <a asp-controller="Home" asp-action="Servicos">Serviços</a>
-            }
+                @if (clienteLogado)
+                {
+                    <a asp-controller="AreaCliente" asp-action="Index">Serviços</a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Servicos">Serviços</a>
+                }
 
-            <a asp-controller="Home" asp-action="Contato">Contato</a>
+                <a asp-controller="Home" asp-action="Contato">Contato</a>
 
-            <a class="admin-link-pro" asp-controller="Auth" asp-action="Sair">
-                Sair
-            </a>
-        </nav>
-    </header>
+                <a class="admin-link-pro" asp-controller="Auth" asp-action="Sair">
+                    Sair
+                </a>
+            </nav>
+        </header>
+    }
 
     <main>
         @RenderBody()
     </main>
 
-    <footer class="site-footer">
-        © @DateTime.Now.Year - @nomeEmpresa
-    </footer>
+    @if (logado)
+    {
+        <footer class="site-footer">
+            © @DateTime.Now.Year - @nomeEmpresa
+        </footer>
+    }
 
 </body>
 </html>

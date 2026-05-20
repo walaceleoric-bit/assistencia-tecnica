@@ -17,6 +17,7 @@ namespace AssistenciaTecnica.Controllers
 
         public IActionResult Landing()
         {
+            HttpContext.Session.Clear();
             return View();
         }
 
