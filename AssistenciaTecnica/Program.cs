@@ -1,4 +1,5 @@
 using AssistenciaTecnica.Data;
+using AssistenciaTecnica.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,8 @@ else
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<CloudinaryService>();
 
 var app = builder.Build();
 

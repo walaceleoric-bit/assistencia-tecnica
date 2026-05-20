@@ -1,5 +1,6 @@
 ﻿using AssistenciaTecnica.Data;
 using AssistenciaTecnica.Models;
+using AssistenciaTecnica.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,14 +9,14 @@ namespace AssistenciaTecnica.Controllers
     public class AdminController : Controller
     {
         private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly CloudinaryService _cloudinaryService;
 
         public AdminController(
             AppDbContext context,
-            IWebHostEnvironment webHostEnvironment)
+            CloudinaryService cloudinaryService)
         {
             _context = context;
-            _webHostEnvironment = webHostEnvironment;
+            _cloudinaryService = cloudinaryService;
         }
 
         private bool AdminLogado()
@@ -28,35 +29,17 @@ namespace AssistenciaTecnica.Controllers
             return HttpContext.Session.GetInt32("EMPRESA_ID") ?? 0;
         }
 
-        private async Task<string> SalvarImagemAsync(IFormFile? arquivo)
+        private async Task<string> SalvarImagemAsync(
+            IFormFile? arquivo,
+            string pasta)
         {
             if (arquivo == null || arquivo.Length == 0)
                 return "";
 
-            var webRoot = _webHostEnvironment.WebRootPath;
-
-            if (string.IsNullOrEmpty(webRoot))
-            {
-                webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            }
-
-            var pasta = Path.Combine(webRoot, "uploads", "site");
-
-            if (!Directory.Exists(pasta))
-            {
-                Directory.CreateDirectory(pasta);
-            }
-
-            var extensao = Path.GetExtension(arquivo.FileName);
-            var nomeArquivo = $"{Guid.NewGuid()}{extensao}";
-            var caminhoCompleto = Path.Combine(pasta, nomeArquivo);
-
-            using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
-            {
-                await arquivo.CopyToAsync(stream);
-            }
-
-            return $"/uploads/site/{nomeArquivo}";
+            return await _cloudinaryService.UploadImagemAsync(
+                arquivo,
+                pasta
+            );
         }
 
         private async Task<Configuracao> ObterConfiguracao()
@@ -229,9 +212,23 @@ namespace AssistenciaTecnica.Controllers
             if (configBanco == null)
                 return RedirectToAction("Configuracao");
 
-            var novaLogo = await SalvarImagemAsync(logo);
-            var novaDestaque1 = await SalvarImagemAsync(destaque1);
-            var novaDestaque2 = await SalvarImagemAsync(destaque2);
+            var pastaBase =
+                $"wlc-sistemas/assistencia-tecnica/empresa-{empresaId}";
+
+            var novaLogo = await SalvarImagemAsync(
+                logo,
+                $"{pastaBase}/logos"
+            );
+
+            var novaDestaque1 = await SalvarImagemAsync(
+                destaque1,
+                $"{pastaBase}/destaques"
+            );
+
+            var novaDestaque2 = await SalvarImagemAsync(
+                destaque2,
+                $"{pastaBase}/destaques"
+            );
 
             config.Id = configBanco.Id;
             config.EmpresaId = empresaId;
