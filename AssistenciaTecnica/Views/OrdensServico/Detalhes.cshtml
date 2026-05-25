@@ -13,6 +13,13 @@
         ? ""
         : "55" + telefoneLimpo;
 
+    var nomeEmpresa = ViewBag.EmpresaNome as string;
+
+    if (string.IsNullOrWhiteSpace(nomeEmpresa))
+    {
+        nomeEmpresa = User?.Identity?.Name ?? "Minha Empresa";
+    }
+
     var mensagemOrcamento =
         $"Olá {Model.Cliente?.Nome}, tudo bem? Sua ordem #{Model.Id} referente ao aparelho {Model.Aparelho} foi analisada. O valor do serviço ficou em R$ {Model.Valor:N2}. Podemos seguir com o reparo?";
 
@@ -36,9 +43,7 @@
 }
 
 <style>
-
     @@media print {
-
         .no-print {
             display: none !important;
         }
@@ -69,24 +74,18 @@
             opacity: .95;
             color: white;
         }
-
 </style>
 
 <div class="container mt-4 no-print">
 
     <div class="d-flex justify-content-between align-items-center">
 
-        <a class="back-button"
-               asp-action="Index">
-
+        <a class="back-button" asp-action="Index">
             ← Voltar
-
         </a>
 
         <button onclick="window.print()" class="pdf-button">
-
             📄 Baixar PDF
-
         </button>
 
     </div>
@@ -109,44 +108,21 @@
 
         </div>
 
-        <div style="text-align:right;">
-
-            <h4 style="margin:0;">
-                Air Plane
-            </h4>
-
-            <small>
-                Assistência Técnica
-            </small>
-
-        </div>
 
     </div>
 
     <div class="whatsapp-actions no-print">
 
-        <a class="btn-main"
-               href="@linkOrcamento"
-               target="_blank">
-
+        <a class="btn-main" href="@linkOrcamento" target="_blank">
             Enviar orçamento
-
         </a>
 
-        <a class="btn-main"
-               href="@linkPronto"
-               target="_blank">
-
+        <a class="btn-main" href="@linkPronto" target="_blank">
             Avisar que está pronto
-
         </a>
 
-        <a class="btn-outline-main"
-               href="@linkStatus"
-               target="_blank">
-
+        <a class="btn-outline-main" href="@linkStatus" target="_blank">
             Enviar status
-
         </a>
 
     </div>
@@ -206,9 +182,7 @@
     <hr />
 
     <div style="text-align:center; opacity:.7; margin-top:40px;">
-
         Documento gerado automaticamente pelo sistema.
-
     </div>
 
 </div>
