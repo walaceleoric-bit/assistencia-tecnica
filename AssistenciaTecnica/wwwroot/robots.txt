@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+
+Sitemap: https://assistencia-tecnica-qrwu.onrender.com/sitemap.xml
