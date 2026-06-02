@@ -34,6 +34,31 @@
 
     <title>@ViewData["Title"] - @nomeEmpresa</title>
 
+    <meta name="description"
+          content="Assistência técnica especializada em celulares, notebooks e computadores." />
+
+    <meta name="keywords"
+          content="assistência técnica, conserto de celular, notebook, computador, troca de tela, formatação, suporte técnico" />
+
+    <meta name="author"
+          content="@nomeEmpresa" />
+
+    <meta property="og:title"
+          content="@ViewData["Title"] - @nomeEmpresa" />
+
+    <meta property="og:description"
+          content="Assistência técnica especializada em celulares, notebooks e computadores." />
+
+    <meta property="og:type"
+          content="website" />
+
+    @if (!string.IsNullOrWhiteSpace(logoUrl))
+    {
+        <meta property="og:image" content="@logoUrl" />
+    }
+
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
