@@ -26,19 +26,11 @@ builder.Services.AddScoped<CloudinaryService>();
 
 var app = builder.Build();
 
-// Inicializa o banco de dados
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    if (app.Environment.IsDevelopment())
-    {
-        db.Database.Migrate();
-    }
-    else
-    {
-        db.Database.EnsureCreated();
-    }
+    db.Database.Migrate();
 }
 
 if (!app.Environment.IsDevelopment())
