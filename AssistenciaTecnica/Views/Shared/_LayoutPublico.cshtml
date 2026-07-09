@@ -1,4 +1,5 @@
 ﻿@using AssistenciaTecnica.Data
+@using AssistenciaTecnica.Models
 @inject AppDbContext Contexto
 @inject IHttpContextAccessor ContextAccessor
 
@@ -19,8 +20,17 @@
 
     var logado = (clienteLogado || admLogado) && !estaNaLanding;
 
-    var configLayout = Contexto.Configuracoes
-        .FirstOrDefault(c => c.EmpresaId == empresaId);
+    Configuracao? configLayout = null;
+
+    try
+    {
+        configLayout = Contexto.Configuracoes
+            .FirstOrDefault(c => c.EmpresaId == empresaId);
+    }
+    catch
+    {
+        configLayout = null;
+    }
 
     var nomeEmpresa = configLayout?.NomeEmpresa ?? "Empresa";
     var logoUrl = configLayout?.LogoUrl ?? "";
