@@ -16,6 +16,7 @@ builder.Services.AddScoped<CloudinaryService>();
 
 var app = builder.Build();
 
+// TEMPORARIAMENTE DESABILITADO PARA EVITAR NOVAS MIGRAÇÕES
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
