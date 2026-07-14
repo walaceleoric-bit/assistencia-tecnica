@@ -11,17 +11,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddScoped<CloudinaryService>();
 
 var app = builder.Build();
-
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-     db.Database.Migrate();
+    try
+    {
+        db.Database.EnsureCreated();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Erro ao conectar ao banco:");
+        Console.WriteLine(ex.Message);
+    }
 }
 
 if (!app.Environment.IsDevelopment())
