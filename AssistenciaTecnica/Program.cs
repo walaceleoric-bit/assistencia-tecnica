@@ -13,7 +13,7 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new Exception("A ConnectionStrings:DefaultConnection não foi encontrada.");
 }
 
-// Exibe apenas informações seguras da conexão
+// Exibe apenas informações da conexão (sem mostrar a senha)
 var builderConnection = new NpgsqlConnectionStringBuilder(connectionString);
 
 Console.WriteLine("=====================================");
@@ -40,39 +40,10 @@ builder.Services.AddScoped<CloudinaryService>();
 
 var app = builder.Build();
 
-// Testa conexão e aplica migrations
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    try
-    {
-        Console.WriteLine("=====================================");
-        Console.WriteLine("TESTANDO CONEXÃO COM O POSTGRES...");
-        Console.WriteLine("=====================================");
-
-        db.Database.OpenConnection();
-
-        Console.WriteLine("Conexão realizada com sucesso!");
-
-        db.Database.CloseConnection();
-
-        Console.WriteLine("Aplicando Migrations...");
-
-        db.Database.Migrate();
-
-        Console.WriteLine("Banco atualizado com sucesso.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("=====================================");
-        Console.WriteLine("ERRO AO CONECTAR NO POSTGRES");
-        Console.WriteLine(ex);
-        Console.WriteLine("=====================================");
-
-        throw;
-    }
-}
+// ===========================================
+// TESTE TEMPORÁRIO
+// Não testa conexão e não executa migrations.
+// ===========================================
 
 if (!app.Environment.IsDevelopment())
 {
@@ -92,6 +63,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Landing}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
