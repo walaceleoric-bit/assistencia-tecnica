@@ -13,11 +13,14 @@
     var clienteLogado = http?.Session.GetString("CLIENTE_LOGADO") == "SIM";
     var admLogado = http?.Session.GetString("ADM_LOGADO") == "SIM";
 
-    var estaNaLanding =
-        ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
-        ViewContext.RouteData.Values["action"]?.ToString() == "Landing";
+    var controllerAtual = ViewContext.RouteData.Values["controller"]?.ToString();
+    var actionAtual = ViewContext.RouteData.Values["action"]?.ToString();
 
-    var logado = (clienteLogado || admLogado) && !estaNaLanding;
+    var ehTelaDeLogin = controllerAtual == "Auth" && actionAtual == "Login";
+    var estaNaLanding = controllerAtual == "Home" && actionAtual == "Landing";
+
+    // O menu só renderiza se o usuário estiver logado E NÃO estiver na tela de Login nem na Landing
+    var logado = (clienteLogado || admLogado) && !estaNaLanding && !ehTelaDeLogin;
 
     var configLayout = Contexto.Configuracoes
         .FirstOrDefault(c => c.EmpresaId == empresaId);
