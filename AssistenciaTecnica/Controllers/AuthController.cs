@@ -93,10 +93,11 @@ namespace AssistenciaTecnica.Controllers
             return RedirectToAction("Login");
         }
 
+        // REDIRECIONAMENTO CORRIGIDO PARA LOGIN
         public IActionResult Sair()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Landing", "Home");
+            return RedirectToAction("Login", "Auth");
         }
 
         private async Task CriarEmpresaPadraoSeNaoExistir()
@@ -123,7 +124,6 @@ namespace AssistenciaTecnica.Controllers
             }
             catch (Exception ex)
             {
-                // Registra o log no console caso ocorra alguma falha na criação da empresa
                 Console.WriteLine($"Erro ao verificar/criar empresa padrão: {ex.Message}");
             }
         }
