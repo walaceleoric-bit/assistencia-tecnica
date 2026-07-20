@@ -3,13 +3,17 @@
 @{
     ViewData["Title"] = "Início";
 
-    var whatsappLimpo = Model.WhatsApp?
+    // Garante que o Model não seja nulo para evitar o Erro 500
+    var config = Model ?? new AssistenciaTecnica.Models.Configuracao();
+
+    var whatsappLimpo = config.WhatsApp?
         .Replace(" ", "")
         .Replace("-", "")
         .Replace("(", "")
         .Replace(")", "");
 
-    var mensagem = $"Olá, vim pelo site da {Model.NomeEmpresa} e gostaria de solicitar atendimento.";
+    var nomeEmpresa = string.IsNullOrWhiteSpace(config.NomeEmpresa) ? "Assistência Técnica" : config.NomeEmpresa;
+    var mensagem = $"Olá, vim pelo site da {nomeEmpresa} e gostaria de solicitar atendimento.";
 
     var linkWhatsApp = string.IsNullOrWhiteSpace(whatsappLimpo)
         ? "#"
@@ -20,11 +24,11 @@
     <div class="new-home-content">
 
         <div class="new-home-text">
-            <span class="new-home-location">📍 @Model.CidadesAtendidas</span>
+            <span class="new-home-location">📍 @(string.IsNullOrWhiteSpace(config.CidadesAtendidas) ? "Sua Região" : config.CidadesAtendidas)</span>
 
-            <h1>@Model.TituloPrincipal</h1>
+            <h1>@(string.IsNullOrWhiteSpace(config.TituloPrincipal) ? "Assistência Técnica Especializada" : config.TituloPrincipal)</h1>
 
-            <p>@Model.TextoPrincipal</p>
+            <p>@(string.IsNullOrWhiteSpace(config.TextoPrincipal) ? "Conserto e manutenção com agilidade e garantia." : config.TextoPrincipal)</p>
 
             <div class="new-home-benefits">
                 <div>
@@ -52,14 +56,14 @@
         </div>
 
         <div class="new-home-images">
-            @if (!string.IsNullOrWhiteSpace(Model.Destaque1ImagemUrl))
+            @if (!string.IsNullOrWhiteSpace(config.Destaque1ImagemUrl))
             {
-                <img class="main-hero-img" src="@Model.Destaque1ImagemUrl" alt="@Model.Destaque1Titulo" />
+                <img class="main-hero-img" src="@config.Destaque1ImagemUrl" alt="@config.Destaque1Titulo" />
             }
 
-            @if (!string.IsNullOrWhiteSpace(Model.Destaque2ImagemUrl))
+            @if (!string.IsNullOrWhiteSpace(config.Destaque2ImagemUrl))
             {
-                <img class="small-hero-img" src="@Model.Destaque2ImagemUrl" alt="@Model.Destaque2Titulo" />
+                <img class="small-hero-img" src="@config.Destaque2ImagemUrl" alt="@config.Destaque2Titulo" />
             }
         </div>
 
@@ -93,27 +97,27 @@
     <div class="new-highlight-grid">
 
         <div class="new-highlight-card">
-            @if (!string.IsNullOrWhiteSpace(Model.Destaque1ImagemUrl))
+            @if (!string.IsNullOrWhiteSpace(config.Destaque1ImagemUrl))
             {
-                <img src="@Model.Destaque1ImagemUrl" alt="@Model.Destaque1Titulo" />
+                <img src="@config.Destaque1ImagemUrl" alt="@config.Destaque1Titulo" />
             }
 
             <div>
-                <h3>@Model.Destaque1Titulo</h3>
-                <p>@Model.Destaque1Texto</p>
+                <h3>@(string.IsNullOrWhiteSpace(config.Destaque1Titulo) ? "Manutenção preventiva e corretiva" : config.Destaque1Titulo)</h3>
+                <p>@(string.IsNullOrWhiteSpace(config.Destaque1Texto) ? "Orçamento rápido sem compromisso." : config.Destaque1Texto)</p>
                 <a href="@linkWhatsApp" target="_blank">Solicitar atendimento</a>
             </div>
         </div>
 
         <div class="new-highlight-card">
-            @if (!string.IsNullOrWhiteSpace(Model.Destaque2ImagemUrl))
+            @if (!string.IsNullOrWhiteSpace(config.Destaque2ImagemUrl))
             {
-                <img src="@Model.Destaque2ImagemUrl" alt="@Model.Destaque2Titulo" />
+                <img src="@config.Destaque2ImagemUrl" alt="@config.Destaque2Titulo" />
             }
 
             <div>
-                <h3>@Model.Destaque2Titulo</h3>
-                <p>@Model.Destaque2Texto</p>
+                <h3>@(string.IsNullOrWhiteSpace(config.Destaque2Titulo) ? "Reparo com garantia" : config.Destaque2Titulo)</h3>
+                <p>@(string.IsNullOrWhiteSpace(config.Destaque2Texto) ? "Peças de qualidade e mão de obra treinada." : config.Destaque2Texto)</p>
                 <a href="@linkWhatsApp" target="_blank">Falar agora</a>
             </div>
         </div>
@@ -164,7 +168,7 @@
     <div>
         <span>📍</span>
         <h3>Região atendida</h3>
-        <p>@Model.CidadesAtendidas</p>
+        <p>@(string.IsNullOrWhiteSpace(config.CidadesAtendidas) ? "Atendemos sua região" : config.CidadesAtendidas)</p>
     </div>
 
     <div>
@@ -186,6 +190,6 @@
 
     <div class="new-region-card">
         <h2>📍 Atendimento local</h2>
-        <p>@Model.CidadesAtendidas</p>
+        <p>@(string.IsNullOrWhiteSpace(config.CidadesAtendidas) ? "Sua Cidade e Região" : config.CidadesAtendidas)</p>
     </div>
 </section>
