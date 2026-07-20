@@ -6,7 +6,9 @@ using Npgsql;
 var builder = WebApplication.CreateBuilder(args);
 
 // Obtém a Connection String
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration["ConnectionStrings__DefaultConnection"]
+    ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
 
 if (string.IsNullOrWhiteSpace(connectionString))
 {
