@@ -34,6 +34,7 @@ namespace AssistenciaTecnica.Controllers
             var usuarioDigitado = usuario.Trim().ToLower();
             var senhaDigitada = senha.Trim();
 
+            // 1. Dono do sistema
             if (usuarioDigitado == "wlc" && senhaDigitada == "123456")
             {
                 HttpContext.Session.Clear();
@@ -42,6 +43,7 @@ namespace AssistenciaTecnica.Controllers
                 return RedirectToAction("Index", "Dono");
             }
 
+            // 2. Empresa / Admin
             var empresa = await _context.Empresas
                 .FirstOrDefaultAsync(e =>
                     e.Usuario.ToLower() == usuarioDigitado &&
@@ -59,11 +61,11 @@ namespace AssistenciaTecnica.Controllers
                 return RedirectToAction("Index", "Admin");
             }
 
-            var clientes = await _context.Clientes.ToListAsync();
-
-            var cliente = clientes.FirstOrDefault(c =>
-                (c.UsuarioCliente ?? "").Trim().ToLower() == usuarioDigitado &&
-                (c.SenhaCliente ?? "").Trim() == senhaDigitada);
+            // 3. Cliente (Busca otimizada no banco de dados)
+            var cliente = await _context.Clientes
+                .FirstOrDefaultAsync(c =>
+                    c.UsuarioCliente != null && c.UsuarioCliente.Trim().ToLower() == usuarioDigitado &&
+                    c.SenhaCliente != null && c.SenhaCliente.Trim() == senhaDigitada);
 
             if (cliente != null)
             {
@@ -75,8 +77,6 @@ namespace AssistenciaTecnica.Controllers
                 HttpContext.Session.SetString("CLIENTE_LOGADO", "SIM");
                 HttpContext.Session.SetInt32("CLIENTE_ID", cliente.Id);
                 HttpContext.Session.SetInt32("CLIENTE_EMPRESA_ID", cliente.EmpresaId);
-
-                // IMPORTANTE
                 HttpContext.Session.SetInt32("EMPRESA_ID", cliente.EmpresaId);
 
                 HttpContext.Session.SetString("CLIENTE_NOME", cliente.Nome);
@@ -101,22 +101,30 @@ namespace AssistenciaTecnica.Controllers
 
         private async Task CriarEmpresaPadraoSeNaoExistir()
         {
-            var existeEmpresa = await _context.Empresas.AnyAsync();
-
-            if (!existeEmpresa)
+            try
             {
-                var empresa = new Empresa
-                {
-                    NomeEmpresa = "Milton Cardoso",
-                    Usuario = "admin",
-                    Senha = "123456",
-                    WhatsApp = "",
-                    Ativo = true,
-                    DataCadastro = DateTime.UtcNow
-                };
+                var existeEmpresa = await _context.Empresas.AnyAsync();
 
-                _context.Empresas.Add(empresa);
-                await _context.SaveChangesAsync();
+                if (!existeEmpresa)
+                {
+                    var empresa = new Empresa
+                    {
+                        NomeEmpresa = "Milton Cardoso",
+                        Usuario = "admin",
+                        Senha = "123456",
+                        WhatsApp = "",
+                        Ativo = true,
+                        DataCadastro = DateTime.UtcNow
+                    };
+
+                    _context.Empresas.Add(empresa);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Registra o log no console caso ocorra alguma falha na criação da empresa
+                Console.WriteLine($"Erro ao verificar/criar empresa padrão: {ex.Message}");
             }
         }
     }

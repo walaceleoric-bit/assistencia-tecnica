@@ -13,9 +13,8 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new Exception("A ConnectionStrings:DefaultConnection não foi encontrada.");
 }
 
-// Exibe apenas informações da conexão (sem mostrar a senha)
+// Exibe informações da conexão nos logs para conferência
 var builderConnection = new NpgsqlConnectionStringBuilder(connectionString);
-
 Console.WriteLine("=====================================");
 Console.WriteLine("CONFIGURAÇÃO DO BANCO");
 Console.WriteLine($"Host.....: {builderConnection.Host}");
@@ -40,10 +39,23 @@ builder.Services.AddScoped<CloudinaryService>();
 
 var app = builder.Build();
 
-// ===========================================
-// TESTE TEMPORÁRIO
-// Não testa conexão e não executa migrations.
-// ===========================================
+// =========================================================
+// APLICA MIGRATIONS AUTOMATICAMENTE AO INICIAR
+// Cria o banco de dados e as tabelas caso ainda não existam no Render
+// =========================================================
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate();
+        Console.WriteLine("Migrations aplicadas com sucesso no PostgreSQL!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Erro ao aplicar migrations: {ex.Message}");
+    }
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -52,13 +64,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseSession();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
