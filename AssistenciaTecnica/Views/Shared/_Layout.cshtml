@@ -24,8 +24,10 @@
 
     var nomeEmpresa = configLayout?.NomeEmpresa ?? "Empresa";
     var logoUrl = configLayout?.LogoUrl ?? "";
+    var logoResolvedUrl = !string.IsNullOrWhiteSpace(logoUrl) && logoUrl.StartsWith("~")
+        ? Url.Content(logoUrl)
+        : logoUrl;
 }
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -52,9 +54,9 @@
     <meta property="og:type"
           content="website" />
 
-    @if (!string.IsNullOrWhiteSpace(logoUrl))
+    @if (!string.IsNullOrWhiteSpace(logoResolvedUrl))
     {
-        <meta property="og:image" content="@logoUrl" />
+        <meta property="og:image" content="@logoResolvedUrl" />
     }
 
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
@@ -62,16 +64,15 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-
 <body>
 
     @if (logado)
     {
         <header class="top-menu-pro">
             <div class="top-brand-center">
-                @if (!string.IsNullOrWhiteSpace(logoUrl))
+                @if (!string.IsNullOrWhiteSpace(logoResolvedUrl))
                 {
-                    <img src="@logoUrl" alt="@nomeEmpresa" />
+                    <img src="@logoResolvedUrl" alt="@nomeEmpresa" />
                 }
             </div>
 
@@ -106,6 +107,8 @@
             © @DateTime.Now.Year - @nomeEmpresa
         </footer>
     }
-
+    
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

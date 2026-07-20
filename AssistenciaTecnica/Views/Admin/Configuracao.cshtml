@@ -2,6 +2,15 @@
 
 @{
     ViewData["Title"] = "Configuração do Site";
+    
+    var logoUrl = !string.IsNullOrWhiteSpace(Model?.LogoUrl) && Model.LogoUrl.StartsWith("~")
+        ? Url.Content(Model.LogoUrl) : Model?.LogoUrl;
+        
+    var d1Url = !string.IsNullOrWhiteSpace(Model?.Destaque1ImagemUrl) && Model.Destaque1ImagemUrl.StartsWith("~")
+        ? Url.Content(Model.Destaque1ImagemUrl) : Model?.Destaque1ImagemUrl;
+        
+    var d2Url = !string.IsNullOrWhiteSpace(Model?.Destaque2ImagemUrl) && Model.Destaque2ImagemUrl.StartsWith("~")
+        ? Url.Content(Model.Destaque2ImagemUrl) : Model?.Destaque2ImagemUrl;
 }
 
 <div class="container mt-4">
@@ -24,43 +33,44 @@
         </div>
     }
 
-    <form asp-action="Configuracao"
+    <form asp-controller="Admin"
+          asp-action="Configuracao"
           method="post"
           enctype="multipart/form-data"
           class="config-panel">
 
         <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="EmpresaId" />
+        <input type="hidden" asp-for="LogoUrl" />
+        <input type="hidden" asp-for="Destaque1ImagemUrl" />
+        <input type="hidden" asp-for="Destaque2ImagemUrl" />
 
         <div class="config-section">
             <h3>🏢 Dados da Empresa</h3>
 
-            <label>Nome da empresa</label>
+            <label asp-for="NomeEmpresa">Nome da empresa</label>
             <input asp-for="NomeEmpresa" class="form-control" />
 
-            <label>Subtítulo</label>
+            <label asp-for="SubtituloEmpresa">Subtítulo</label>
             <input asp-for="SubtituloEmpresa" class="form-control" />
 
-            <label>WhatsApp principal</label>
+            <label asp-for="WhatsApp">WhatsApp principal</label>
             <input asp-for="WhatsApp"
                    class="form-control"
                    placeholder="Ex: 27999999999" />
+            <small class="text-muted d-block mb-2">Digite somente números com DDD.</small>
 
-            <small>Digite somente números com DDD.</small>
-
-            <label>Cidades atendidas</label>
+            <label asp-for="CidadesAtendidas">Cidades atendidas</label>
             <input asp-for="CidadesAtendidas" class="form-control" />
 
-
-            <label>🔐 Senha do administrador</label>
+            <label asp-for="SenhaAdm">🔐 Senha do administrador</label>
             <input asp-for="SenhaAdm"
                    type="password"
                    class="form-control"
                    placeholder="Digite a nova senha do ADM" />
-
-            <small>
+            <small class="text-muted d-block mb-2">
                 Altere aqui a senha usada no login do painel administrativo.
             </small>
-
 
             <label>Logo da empresa</label>
             <input type="file"
@@ -68,37 +78,34 @@
                    class="form-control"
                    accept="image/*" />
 
-            @if (!string.IsNullOrWhiteSpace(Model.LogoUrl))
+            @if (!string.IsNullOrWhiteSpace(logoUrl))
             {
-                <div class="preview-box">
+                <div class="preview-box mt-2">
                     <p>Logo atual:</p>
-                    <img src="@Model.LogoUrl" alt="Logo atual" />
+                    <img src="@logoUrl" alt="Logo atual" style="max-height: 100px;" />
                 </div>
             }
-
         </div>
-
 
         <div class="config-section">
             <h3>🏠 Página Principal</h3>
 
-            <label>Título principal</label>
+            <label asp-for="TituloPrincipal">Título principal</label>
             <input asp-for="TituloPrincipal" class="form-control" />
 
-            <label>Texto principal</label>
+            <label asp-for="TextoPrincipal">Texto principal</label>
             <textarea asp-for="TextoPrincipal"
                       class="form-control"
                       rows="4"></textarea>
         </div>
 
-
         <div class="config-section">
             <h3>🖼 Destaque 1</h3>
 
-            <label>Título do destaque 1</label>
+            <label asp-for="Destaque1Titulo">Título do destaque 1</label>
             <input asp-for="Destaque1Titulo" class="form-control" />
 
-            <label>Texto do destaque 1</label>
+            <label asp-for="Destaque1Texto">Texto do destaque 1</label>
             <textarea asp-for="Destaque1Texto"
                       class="form-control"
                       rows="3"></textarea>
@@ -109,24 +116,22 @@
                    class="form-control"
                    accept="image/*" />
 
-            @if (!string.IsNullOrWhiteSpace(Model.Destaque1ImagemUrl))
+            @if (!string.IsNullOrWhiteSpace(d1Url))
             {
-                <div class="preview-box large">
+                <div class="preview-box large mt-2">
                     <p>Imagem atual:</p>
-                    <img src="@Model.Destaque1ImagemUrl" alt="Destaque 1" />
+                    <img src="@d1Url" alt="Destaque 1" style="max-height: 150px;" />
                 </div>
             }
-
         </div>
-
 
         <div class="config-section">
             <h3>🖼 Destaque 2</h3>
 
-            <label>Título do destaque 2</label>
+            <label asp-for="Destaque2Titulo">Título do destaque 2</label>
             <input asp-for="Destaque2Titulo" class="form-control" />
 
-            <label>Texto do destaque 2</label>
+            <label asp-for="Destaque2Texto">Texto do destaque 2</label>
             <textarea asp-for="Destaque2Texto"
                       class="form-control"
                       rows="3"></textarea>
@@ -137,21 +142,18 @@
                    class="form-control"
                    accept="image/*" />
 
-            @if (!string.IsNullOrWhiteSpace(Model.Destaque2ImagemUrl))
+            @if (!string.IsNullOrWhiteSpace(d2Url))
             {
-                <div class="preview-box large">
+                <div class="preview-box large mt-2">
                     <p>Imagem atual:</p>
-                    <img src="@Model.Destaque2ImagemUrl" alt="Destaque 2" />
+                    <img src="@d2Url" alt="Destaque 2" style="max-height: 150px;" />
                 </div>
             }
-
         </div>
-
 
         <button type="submit" class="btn-main mt-4">
             Salvar Configurações
         </button>
 
     </form>
-
 </div>

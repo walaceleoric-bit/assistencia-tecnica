@@ -212,8 +212,7 @@ namespace AssistenciaTecnica.Controllers
             if (configBanco == null)
                 return RedirectToAction("Configuracao");
 
-            var pastaBase =
-                $"wlc-sistemas/assistencia-tecnica/empresa-{empresaId}";
+            var pastaBase = $"wlc-sistemas/assistencia-tecnica/empresa-{empresaId}";
 
             var novaLogo = await SalvarImagemAsync(
                 logo,
@@ -233,6 +232,7 @@ namespace AssistenciaTecnica.Controllers
             config.Id = configBanco.Id;
             config.EmpresaId = empresaId;
 
+            // Se enviou imagem nova grava a URL do Cloudinary, senão mantém a do banco
             config.LogoUrl = string.IsNullOrWhiteSpace(novaLogo)
                 ? configBanco.LogoUrl
                 : novaLogo;
@@ -245,6 +245,7 @@ namespace AssistenciaTecnica.Controllers
                 ? configBanco.Destaque2ImagemUrl
                 : novaDestaque2;
 
+            // Tratamento da senha caso venha vazia do formulário
             if (string.IsNullOrWhiteSpace(config.SenhaAdm))
             {
                 config.SenhaAdm = configBanco.SenhaAdm;
@@ -266,7 +267,6 @@ namespace AssistenciaTecnica.Controllers
             config.Destaque2Titulo ??= "";
             config.Destaque2Texto ??= "";
             config.Destaque2ImagemUrl ??= "";
-            config.SenhaAdm ??= "123456";
 
             _context.Configuracoes.Update(config);
             await _context.SaveChangesAsync();
