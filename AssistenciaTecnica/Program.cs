@@ -18,6 +18,7 @@ if (string.IsNullOrWhiteSpace(rawConnectionString))
 
 // 2. Converte a conexão se ela vier no formato URL (postgres://...) do Render
 string connectionString;
+
 if (rawConnectionString.StartsWith("postgres://") || rawConnectionString.StartsWith("postgresql://"))
 {
     var databaseUri = new Uri(rawConnectionString);
@@ -103,14 +104,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseSession();
 app.UseAuthorization();
 
+// ROTA PADRÃO ALTERADA PARA TELA DE LOGIN
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 app.Run();
