@@ -108,9 +108,9 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
-// ROTA PADRÃO ALTERADA PARA TELA DE LOGIN
+// ROTA PADRÃO - PÁGINA PRINCIPAL DO SITE
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Auth}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

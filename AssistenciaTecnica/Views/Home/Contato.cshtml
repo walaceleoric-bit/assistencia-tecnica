@@ -1,48 +1,66 @@
 ﻿@model AssistenciaTecnica.Models.Configuracao
 
 @{
+    Layout = "_LayoutPublico";
     ViewData["Title"] = "Contato";
 
-    var whatsappLimpo = Model.WhatsApp?
+    var config = Model ?? new AssistenciaTecnica.Models.Configuracao();
+
+    var whatsappLimpo = config.WhatsApp?
         .Replace(" ", "")
         .Replace("-", "")
         .Replace("(", "")
         .Replace(")", "");
 
-    var mensagem = $"Olá, vim pelo site da {Model.NomeEmpresa} e gostaria de solicitar um atendimento.";
+    var nomeEmpresa = string.IsNullOrWhiteSpace(config.NomeEmpresa)
+        ? "Assistência Técnica"
+        : config.NomeEmpresa;
+
+    var cidadesAtendidas = string.IsNullOrWhiteSpace(config.CidadesAtendidas)
+        ? "Serra, Vitória e região"
+        : config.CidadesAtendidas;
+
+    var mensagem = $"Olá, vim pelo site da {nomeEmpresa} e gostaria de solicitar um atendimento.";
 
     var linkWhatsApp = string.IsNullOrWhiteSpace(whatsappLimpo)
         ? "#"
         : $"https://wa.me/55{whatsappLimpo}?text={Uri.EscapeDataString(mensagem)}";
 }
 
-
 <section class="page-hero">
     <h1>Contato</h1>
-    <p>Solicite atendimento rápido para @Model.CidadesAtendidas.</p>
+    <p>Solicite atendimento rápido para @cidadesAtendidas.</p>
 </section>
 
 <section class="contact-area">
     <div class="form-card contact-card">
-        <h2>@Model.NomeEmpresa</h2>
+
+        <h2>@nomeEmpresa</h2>
 
         <p>
             Entre em contato para orçamento, visita técnica,
             compra ou venda de máquina de lavar.
         </p>
 
-        <p>
-            <b>WhatsApp:</b> @Model.WhatsApp
-        </p>
+        @if (!string.IsNullOrWhiteSpace(config.WhatsApp))
+        {
+            <p>
+                <b>WhatsApp:</b> @config.WhatsApp
+            </p>
+        }
 
         <p>
-            <b>Região atendida:</b> @Model.CidadesAtendidas
+            <b>Região atendida:</b> @cidadesAtendidas
         </p>
 
-        <a class="btn-main"
+        @if (!string.IsNullOrWhiteSpace(config.WhatsApp))
+        {
+            <a class="btn-main"
                href="@linkWhatsApp"
                target="_blank">
-            Chamar no WhatsApp
-        </a>
+                Chamar no WhatsApp
+            </a>
+        }
+
     </div>
 </section>

@@ -1,4 +1,7 @@
-﻿@{
+﻿@model AssistenciaTecnica.Models.Configuracao
+
+@{
+    Layout = "_LayoutPublico";
     ViewData["Title"] = "Serviços";
 }
 
@@ -6,8 +9,8 @@
 
     <div class="container">
         <a class="back-button"
-               asp-controller="Home"
-               asp-action="Index">
+           asp-controller="Home"
+           asp-action="Index">
             ← Voltar
         </a>
     </div>
@@ -24,7 +27,6 @@
     </div>
 
 </section>
-
 
 <section class="servicos-grid-pro">
 
@@ -83,7 +85,6 @@
     </div>
 
 </section>
-
 
 <section class="servicos-processo">
 
